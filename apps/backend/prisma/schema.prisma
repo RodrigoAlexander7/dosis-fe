@@ -1,0 +1,288 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// 1. Define el proveedor de tu base de datos
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 2. Define el generador de cliente de Prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 3. Definición de Modelos y Enums
+
+// --- Enums ---
+
+enum EnumRole {
+  ADMIN
+  DOCTOR
+  NURSE
+}
+
+enum EnumGender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum EnumAnemiaSeverity {
+  NONE
+  MILD
+  MODERATE
+  SEVERE
+}
+
+enum EnumFemaleAdditional {
+  NONE
+  PREGNANT
+  LACTATING
+}
+
+enum EnumGestationTrimester {
+  NONE
+  FIRST
+  SECOND
+  THIRD
+}
+
+enum EnumPresentation {
+  TABLET
+  SYRUP
+  DROPS
+  POWDER
+}
+
+enum EnumAuditAction {
+  LOGIN
+  LOGOUT
+  CREATE_PATIENT
+  UPDATE_PATIENT
+  VIEW_PATIENT
+  CREATE_VISIT
+  UPDATE_VISIT
+  CREATE_PRESCRIPTION
+  UPDATE_PRESCRIPTION
+}
+
+// --- Authentication & User Management ---
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  image     String?
+  role      EnumRole?
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  accounts        Account[]
+  sessions        Session[]
+  patientsCreated Patient[]      @relation("CreatedBy")
+  patientsUpdated Patient[]      @relation("UpdatedBy")
+  visitsCreated   PatientVisit[] @relation("VisitCreatedBy")
+  auditLogs       AuditLog[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model AuditLog {
+  id         String          @id @default(cuid())
+  userId     String          @map("user_id")
+  action     EnumAuditAction
+  entityType String          @map("entity_type")
+  entityId   String          @map("entity_id")
+  metadata   Json?
+  ipAddress  String?         @map("ip_address")
+  userAgent  String?         @map("user_agent")
+  createdAt  DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// --- Geographic Location Tables ---
+
+model Department {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  provinces Province[]
+  patients  Patient[]
+
+  @@map("departments")
+}
+
+model Province {
+  id           Int      @id @default(autoincrement())
+  name         String
+  departmentId Int      @map("department_id")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  department Department @relation(fields: [departmentId], references: [id])
+  districts  District[]
+  patients   Patient[]
+
+  @@unique([name, departmentId])
+  @@map("provinces")
+}
+
+model District {
+  id         Int      @id @default(autoincrement())
+  name       String
+  provinceId Int      @map("province_id")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  province Province  @relation(fields: [provinceId], references: [id])
+  towns    Town[]
+  patients Patient[]
+
+  @@unique([name, provinceId])
+  @@map("districts")
+}
+
+model Town {
+  id                 Int      @id @default(autoincrement())
+  name               String
+  districtId         Int      @map("district_id")
+  altitudeAdjustment Decimal  @map("altitude_adjustment") @db.Decimal(5, 2)
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  district District  @relation(fields: [districtId], references: [id])
+  patients Patient[]
+
+  @@unique([name, districtId])
+  @@map("towns")
+}
+
+// --- Patient Management ---
+
+model Patient {
+  dni          String     @id @db.Char(8)
+  birthDate    DateTime   @map("birth_date") @db.Date
+  gender       EnumGender
+  weight       Decimal?   @db.Decimal(5, 2)
+  departmentId Int        @map("department_id")
+  provinceId   Int        @map("province_id")
+  districtId   Int        @map("district_id")
+  townId       Int        @map("town_id")
+  createdById  String     @map("created_by_id")
+  updatedById  String     @map("updated_by_id")
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  department Department     @relation(fields: [departmentId], references: [id])
+  province   Province       @relation(fields: [provinceId], references: [id])
+  district   District       @relation(fields: [districtId], references: [id])
+  town       Town           @relation(fields: [townId], references: [id])
+  createdBy  User           @relation("CreatedBy", fields: [createdById], references: [id])
+  updatedBy  User           @relation("UpdatedBy", fields: [updatedById], references: [id])
+  visits     PatientVisit[]
+
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("patients")
+}
+
+model PatientVisit {
+  visitId            Int                    @id @default(autoincrement()) @map("visit_id")
+  patientDni         String                 @map("patient_dni") @db.Char(8)
+  visitDate          DateTime               @map("visit_date") @db.Date
+  weight             Decimal                @db.Decimal(5, 2)
+  hbObserved         Decimal                @map("hb_observed") @db.Decimal(4, 1)
+  hbAdjusted         Decimal                @map("hb_adjusted") @db.Decimal(4, 1)
+  anemiaSeverity     EnumAnemiaSeverity     @map("anemia_severity")
+  femaleAdditional   EnumFemaleAdditional   @map("female_additional")
+  gestationTrimester EnumGestationTrimester @map("gestation_trimester")
+  createdById        String                 @map("created_by_id")
+  createdAt          DateTime               @default(now()) @map("created_at") @db.Timestamp(6)
+
+  patient       Patient        @relation(fields: [patientDni], references: [dni])
+  createdBy     User           @relation("VisitCreatedBy", fields: [createdById], references: [id])
+  prescriptions Prescription[]
+
+  @@index([patientDni])
+  @@index([createdById])
+  @@map("patient_visits")
+}
+
+model Supplement {
+  idSupplement     String           @id @map("id_supplement")
+  name             String
+  type             String
+  presentation     EnumPresentation
+  elementalIron    Decimal          @map("elemental_iron")
+  content          Decimal
+  notes            String           @db.Text
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
+  prescriptions    Prescription[]
+  dosingGuidelines SupplementDose[]
+
+  @@map("supplements")
+}
+
+model Prescription {
+  prescriptionId        Int      @id @default(autoincrement()) @map("prescription_id")
+  visitId               Int      @map("visit_id")
+  idSupplement          String   @map("id_supplement")
+  prescribedDose        Decimal  @map("prescribed_dose")
+  treatmentDurationDays Int      @map("treatment_duration_days")
+  prescriptionNotes     String   @map("prescription_notes") @db.Text
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  visit      PatientVisit @relation(fields: [visitId], references: [visitId])
+  supplement Supplement   @relation(fields: [idSupplement], references: [idSupplement])
+
+  @@map("prescriptions")
+}
+
+model SupplementDose {
+  doseId       Int      @id @default(autoincrement()) @map("dose_id")
+  idSupplement String   @map("id_supplement")
+  fromAgeDays  Int      @map("from_age_days")
+  toAgeDays    Int      @map("to_age_days")
+  doseAmount   Decimal  @map("dose_amount")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  supplement Supplement @relation(fields: [idSupplement], references: [idSupplement])
+
+  @@map("supplement_doses")
+}

@@ -1,0 +1,53 @@
+[
+   {
+      "idSuplement": "9",
+      "name": "Tabletas de Sulfato Ferroso 120mg",
+      "type": "Sulfato Ferroso",
+      "presentation": "pastilla",
+      "notes": "ninguna",
+      "elementalIron": 1.25,
+      "content": 20,
+      "image": "../assets/images/suplements/ferrimax-jarabe-1-scaled.webp",
+      "dose": [
+         {
+            "from_age": 0,
+            "to_age": 40150,
+            "doseAmount": 2
+         }
+      ]
+   },
+   {
+      "idSuplement": "10",
+      "name": "Tabletas de Sulfato Ferroso 60mg",
+      "type": "Sulfato Ferroso",
+      "presentation": "pastilla",
+      "notes": "ninguna",
+      "elementalIron": 1.25,
+      "content": 20,
+      "image": "../assets/images/suplements/ferrimax-jarabe-1-scaled.webp",
+      "dose": [
+         {
+            "from_age": 0,
+            "to_age": 40150,
+            "doseAmount": 2
+         }
+      ]
+   },
+   {
+      "idSuplement": "11",
+      "name": "Tabletas de Sulfato Ferroso 120mg + Acido Folico 800umg",
+      "type": "Sulfato Ferroso + Acido Folico",
+      "presentation": "pastilla",
+      "notes": "Tableta recubierta",
+      "elementalIron": 0,
+      "content": 100,
+      "image": "../assets/images/suplements/ferrimax-jarabe-1-scaled.webp",
+      "dose": [
+         {
+            "from_age": 0,
+            "to_age": 40150,
+            "doseAmount": 2
+         }
+      ]
+   }
+]

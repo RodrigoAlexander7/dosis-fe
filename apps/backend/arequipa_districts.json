@@ -1,0 +1,160 @@
+[
+  {
+    "location": "AREQUIPA",
+    "sublocation": [
+      "ALTO SELVA ALEGRE",
+      "AREQUIPA",
+      "CAYMA",
+      "CERRO COLORADO",
+      "CHARACATO",
+      "CHIGUATA",
+      "JACOBO HUNTER",
+      "JOSE LUIS BUSTAMANTE Y RIVERO",
+      "LA JOYA",
+      "MARIANO MELGAR",
+      "MIRAFLORES",
+      "MOLLEBAYA",
+      "PAUCARPATA",
+      "POCSI",
+      "POLOBAYA",
+      "QUEQUEÑA",
+      "SABANDIA",
+      "SACHACA",
+      "SAN JUAN DE SIGUAS",
+      "SAN JUAN DE TARUCANI",
+      "SANTA ISABEL DE SIGUAS",
+      "SANTA RITA DE SIGUAS",
+      "SOCABAYA",
+      "TIABAYA",
+      "UCHUMAYO",
+      "VITOR",
+      "YANAHUARA",
+      "YARABAMBA",
+      "YURA"
+    ]
+  },
+  {
+    "location": "CAMANA",
+    "sublocation": [
+      "CAMANA",
+      "JOSE MARIA QUIMPER",
+      "MARIANO NICOLAS VALCARCEL",
+      "MARISCAL CACERES",
+      "NICOLAS DE PIEROLA",
+      "OCOÑA",
+      "QUILCA",
+      "SAMUEL PASTOR"
+    ]
+  },
+  {
+    "location": "CARAVELI",
+    "sublocation": [
+      "ACARI",
+      "ATICO",
+      "ATIQUIPA",
+      "BELLA UNION",
+      "CAHUACHO",
+      "CARAVELI",
+      "CHALA",
+      "CHAPARRA",
+      "HUANUHUANU",
+      "JAQUI",
+      "LOMAS",
+      "QUICACHA",
+      "YAUCA"
+    ]
+  },
+  {
+    "location": "CASTILLA",
+    "sublocation": [
+      "ANDAGUA",
+      "APLAO",
+      "AYO",
+      "CHACHAS",
+      "CHILCAYMARCA",
+      "CHOCO",
+      "HUANCARQUI",
+      "MACHAGUAY",
+      "ORCOPAMPA",
+      "PAMPACOLCA",
+      "TIPAN",
+      "UÑON",
+      "URACA",
+      "VIRACO"
+    ]
+  },
+  {
+    "location": "CAYLLOMA",
+    "sublocation": [
+      "ACHOMA",
+      "CABANACONDE",
+      "CALLALLI",
+      "CAYLLOMA",
+      "CHIVAY",
+      "COPORAQUE",
+      "HUAMBO",
+      "HUANCA",
+      "ICHUPAMPA",
+      "LARI",
+      "LLUTA",
+      "MACA",
+      "MADRIGAL",
+      "MAJES",
+      "SAN ANTONIO DE CHUCA",
+      "SIBAYO",
+      "TAPAY",
+      "TISCO",
+      "TUTI",
+      "YANQUE"
+    ]
+  },
+  {
+    "location": "CONDESUYOS",
+    "sublocation": [
+      "ANDARAY",
+      "CAYARANI",
+      "CHICHAS",
+      "CHUQUIBAMBA",
+      "IRAY",
+      "RIO GRANDE",
+      "SALAMANCA",
+      "YANAQUIHUA"
+    ]
+  },
+  {
+    "location": "ISLAY",
+    "sublocation": [
+      "COCACHACRA",
+      "DEAN VALDIVIA",
+      "ISLAY",
+      "MEJIA",
+      "MOLLENDO",
+      "PUNTA DE BOMBON"
+    ]
+  },
+  {
+    "location": "LA UNION",
+    "sublocation": [
+      "ALCA",
+      "CHARCANA",
+      "COTAHUASI",
+      "HUAYNACOTAS",
+      "PAMPAMARCA",
+      "PUYCA",
+      "QUECHUALLA",
+      "SAYLA",
+      "TAURIA",
+      "TOMEPAMPA",
+      "TORO"
+    ]
+  },
+  {
+    "location": "MARISCAL RAMON CASTILLA",
+    "sublocation": [
+      "PEBAS",
+      "RAMON CASTILLA",
+      "SAN PABLO",
+      "YAVARI"
+    ]
+  }
+]

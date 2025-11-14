@@ -1,0 +1,323 @@
+[
+  {
+    "location": "AMAZONAS",
+    "sublocation": [
+      "BAGUA",
+      "BONGARA",
+      "CHACHAPOYAS",
+      "CONDORCANQUI",
+      "LUYA",
+      "RODRIGUEZ DE MENDOZA",
+      "UTCUBAMBA"
+    ]
+  },
+  {
+    "location": "ANCASH",
+    "sublocation": [
+      "AIJA",
+      "ANTONIO RAYMONDI",
+      "ASUNCION",
+      "BOLOGNESI",
+      "CARHUAZ",
+      "CARLOS FERMIN FITZCARRALD",
+      "CASMA",
+      "CORONGO",
+      "HUARAZ",
+      "HUARI",
+      "HUARMEY",
+      "HUAYLAS",
+      "MARISCAL LUZURIAGA",
+      "OCROS",
+      "PALLASCA",
+      "POMABAMBA",
+      "RECUAY",
+      "SANTA",
+      "SIHUAS",
+      "YUNGAY"
+    ]
+  },
+  {
+    "location": "APURIMAC",
+    "sublocation": [
+      "ABANCAY",
+      "ANDAHUAYLAS",
+      "ANTABAMBA",
+      "AYMARAES",
+      "CHINCHEROS",
+      "COTABAMBAS",
+      "GRAU"
+    ]
+  },
+  {
+    "location": "AREQUIPA",
+    "sublocation": [
+      "AREQUIPA",
+      "CAMANA",
+      "CARAVELI",
+      "CASTILLA",
+      "CAYLLOMA",
+      "CONDESUYOS",
+      "ISLAY",
+      "LA UNION"
+    ]
+  },
+  {
+    "location": "AYACUCHO",
+    "sublocation": [
+      "CANGALLO",
+      "HUAMANGA",
+      "HUANCA SANCOS",
+      "HUANTA",
+      "LA MAR",
+      "LUCANAS",
+      "PARINACOCHAS",
+      "PAUCAR DEL SARA SARA",
+      "SUCRE",
+      "VICTOR FAJARDO",
+      "VILCAS HUAMAN"
+    ]
+  },
+  {
+    "location": "CAJAMARCA",
+    "sublocation": [
+      "CAJABAMBA",
+      "CAJAMARCA",
+      "CELENDIN",
+      "CHOTA",
+      "CONTUMAZA",
+      "CUTERVO",
+      "HUALGAYOC",
+      "JAEN",
+      "SAN IGNACIO",
+      "SAN MARCOS",
+      "SAN MIGUEL",
+      "SAN PABLO",
+      "SANTA CRUZ"
+    ]
+  },
+  {
+    "location": "CALLAO",
+    "sublocation": [
+      "CALLAO"
+    ]
+  },
+  {
+    "location": "CUSCO",
+    "sublocation": [
+      "ACOMAYO",
+      "ANTA",
+      "CALCA",
+      "CANAS",
+      "CANCHIS",
+      "CHUMBIVILCAS",
+      "CUSCO",
+      "ESPINAR",
+      "LA CONVENCION",
+      "PARURO",
+      "PAUCARTAMBO",
+      "QUISPICANCHI",
+      "URUBAMBA"
+    ]
+  },
+  {
+    "location": "HUANCAVELICA",
+    "sublocation": [
+      "ACOBAMBA",
+      "ANGARAES",
+      "CASTROVIRREYNA",
+      "CHURCAMPA",
+      "HUANCAVELICA",
+      "HUAYTARA",
+      "TAYACAJA"
+    ]
+  },
+  {
+    "location": "HUANUCO",
+    "sublocation": [
+      "AMBO",
+      "DOS DE MAYO",
+      "HUACAYBAMBA",
+      "HUAMALIES",
+      "HUANUCO",
+      "LAURICOCHA",
+      "LEONCIO PRADO",
+      "MARAÑON",
+      "PACHITEA",
+      "PUERTO INCA",
+      "YAROWILCA"
+    ]
+  },
+  {
+    "location": "ICA",
+    "sublocation": [
+      "CHINCHA",
+      "ICA",
+      "NASCA",
+      "PALPA",
+      "PISCO"
+    ]
+  },
+  {
+    "location": "JUNIN",
+    "sublocation": [
+      "CHANCHAMAYO",
+      "CHUPACA",
+      "CONCEPCION",
+      "HUANCAYO",
+      "JAUJA",
+      "JUNIN",
+      "SATIPO",
+      "TARMA",
+      "YAULI"
+    ]
+  },
+  {
+    "location": "LA LIBERTAD",
+    "sublocation": [
+      "ASCOPE",
+      "BOLIVAR",
+      "CHEPEN",
+      "GRAN CHIMU",
+      "JULCAN",
+      "OTUZCO",
+      "PACASMAYO",
+      "PATAZ",
+      "SANCHEZ CARRION",
+      "SANTIAGO DE CHUCO",
+      "TRUJILLO",
+      "VIRU"
+    ]
+  },
+  {
+    "location": "LAMBAYEQUE",
+    "sublocation": [
+      "CHICLAYO",
+      "FERREÑAFE",
+      "LAMBAYEQUE"
+    ]
+  },
+  {
+    "location": "LIMA",
+    "sublocation": [
+      "LIMA",
+      "BARRANCA",
+      "CAJATAMBO",
+      "CANTA",
+      "CAÑETE",
+      "HUARAL",
+      "HUAROCHIRI",
+      "HUAURA",
+      "OYON",
+      "YAUYOS"
+    ]
+  },
+  {
+    "location": "LORETO",
+    "sublocation": [
+      "ALTO AMAZONAS",
+      "DATEM DEL MARAÑON",
+      "LORETO",
+      "MARISCAL RAMON CASTILLA",
+      "MAYNAS",
+      "PUTUMAYO",
+      "REQUENA",
+      "UCAYALI"
+    ]
+  },
+  {
+    "location": "MADRE DE DIOS",
+    "sublocation": [
+      "MANU",
+      "TAHUAMANU",
+      "TAMBOPATA"
+    ]
+  },
+  {
+    "location": "MOQUEGUA",
+    "sublocation": [
+      "GENERAL SANCHEZ CERRO",
+      "ILO",
+      "MARISCAL NIETO"
+    ]
+  },
+  {
+    "location": "PASCO",
+    "sublocation": [
+      "DANIEL ALCIDES CARRION",
+      "OXAPAMPA",
+      "PASCO"
+    ]
+  },
+  {
+    "location": "PIURA",
+    "sublocation": [
+      "AYABACA",
+      "HUANCABAMBA",
+      "MORROPON",
+      "PAITA",
+      "PIURA",
+      "SECHURA",
+      "SULLANA",
+      "TALARA"
+    ]
+  },
+  {
+    "location": "PUNO",
+    "sublocation": [
+      "AZANGARO",
+      "CARABAYA",
+      "CHUCUITO",
+      "EL COLLAO",
+      "HUANCANE",
+      "LAMPA",
+      "MELGAR",
+      "MOHO",
+      "PUNO",
+      "SAN ANTONIO DE PUTINA",
+      "SAN ROMAN",
+      "SANDIA",
+      "YUNGUYO"
+    ]
+  },
+  {
+    "location": "SAN MARTIN",
+    "sublocation": [
+      "BELLAVISTA",
+      "EL DORADO",
+      "HUALLAGA",
+      "LAMAS",
+      "MARISCAL CACERES",
+      "MOYOBAMBA",
+      "PICOTA",
+      "RIOJA",
+      "SAN MARTIN",
+      "TOCACHE"
+    ]
+  },
+  {
+    "location": "TACNA",
+    "sublocation": [
+      "CANDARAVE",
+      "JORGE BASADRE",
+      "TACNA",
+      "TARATA"
+    ]
+  },
+  {
+    "location": "TUMBES",
+    "sublocation": [
+      "CONTRALMIRANTE VILLAR",
+      "TUMBES",
+      "ZARUMILLA"
+    ]
+  },
+  {
+    "location": "UCAYALI",
+    "sublocation": [
+      "ATALAYA",
+      "CORONEL PORTILLO",
+      "PADRE ABAD",
+      "PURUS"
+    ]
+  }
+]
