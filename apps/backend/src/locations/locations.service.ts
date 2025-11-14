@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class LocationsService {
@@ -93,7 +94,7 @@ export class LocationsService {
             data: {
                name: townName,
                districtId: district.id,
-               altitudeAdjustment
+               altitudeAdjustment: new Prisma.Decimal(altitudeAdjustment)
             }
          });
       }

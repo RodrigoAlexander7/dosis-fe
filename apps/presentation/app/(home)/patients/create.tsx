@@ -107,6 +107,14 @@ export default function CreatePatientScreen() {
       }
 
       try {
+         console.log('Enviando ubicación:', {
+            department: location.department,
+            province: location.province,
+            district: location.district,
+            town: location.town,
+            adjustHB: location.adjustHB
+         });
+
          // Primero resolver ubicaciones a IDs
          const locationIds = await locationsApi.resolveLocationIds(
             location.department,
@@ -115,6 +123,8 @@ export default function CreatePatientScreen() {
             location.town,
             location.adjustHB
          );
+
+         console.log('IDs recibidos:', locationIds);
 
          // Mapear tipos a formato backend
          const backendTypes = mapExistingToBackend({
@@ -153,9 +163,14 @@ export default function CreatePatientScreen() {
             },
          };
 
+         console.log('DTO a enviar:', createDto);
+
          createMutation.mutate(createDto);
       } catch (error: any) {
-         Alert.alert('Error', getErrorMessage(error, 'Error al procesar ubicación'));
+         console.error('Error completo:', error);
+         console.error('Error response:', error.response?.data);
+         const errorMsg = error.response?.data?.message || error.message || 'Error al procesar ubicación';
+         Alert.alert('Error', Array.isArray(errorMsg) ? errorMsg.join('\n') : errorMsg);
       }
    };
 
