@@ -127,24 +127,11 @@ export class CreatePatientDto {
    gender: Gender;
 
    @ApiProperty({
-      description: 'Peso del paciente en kg',
-      example: 70.5,
-      required: false,
-   })
-   @IsOptional()
-   @IsNumber()
-   @Min(0.5)
-   @Max(300)
-   weight?: number;
-
-   @ApiProperty({
       description: 'ID del departamento',
       example: 1,
    })
    @IsNumber()
-   departmentId: number;
-
-   @ApiProperty({
+   departmentId: number; @ApiProperty({
       description: 'ID de la provincia',
       example: 1,
    })

@@ -7,6 +7,7 @@ import {
    UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { IsEnum, IsBoolean } from 'class-validator';
 import { UsersService } from '../users.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { IsAdminGuard } from '../../auth/guards/is-admin.guard';
@@ -14,10 +15,12 @@ import { CanManageRolesGuard } from '../../auth/guards/can-manage-roles.guard';
 import { EnumRole } from '@prisma/client';
 
 class UpdateRoleDto {
+   @IsEnum(EnumRole)
    role: EnumRole;
 }
 
 class UpdateStatusDto {
+   @IsBoolean()
    isActive: boolean;
 }
 

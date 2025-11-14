@@ -6,6 +6,7 @@ import { AuthModule } from '@/auth/auth.module';
 import { UsersModule } from '@/users/users.module';
 import { PatientsModule } from '@/patients/patients.module';
 import { LocationsModule } from '@/locations/locations.module';
+import { SupplementsModule } from '@/supplements/supplements.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from './prisma/prisma.module';
@@ -17,6 +18,7 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     UsersModule,
     PatientsModule,
     LocationsModule,
+    SupplementsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

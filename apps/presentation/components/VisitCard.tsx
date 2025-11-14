@@ -110,15 +110,15 @@ export const VisitCard: React.FC<VisitCardProps> = ({
          <View style={styles.measurements}>
             <View style={styles.measurement}>
                <Text style={styles.measurementLabel}>Peso</Text>
-               <Text style={styles.measurementValue}>{visit.weight} kg</Text>
+               <Text style={styles.measurementValue}>{Number(visit.weight).toFixed(1)} kg</Text>
             </View>
             <View style={styles.measurement}>
                <Text style={styles.measurementLabel}>HB Observada</Text>
-               <Text style={styles.measurementValue}>{visit.hbObserved.toFixed(1)} g/dL</Text>
+               <Text style={styles.measurementValue}>{Number(visit.hbObserved).toFixed(1)} g/dL</Text>
             </View>
             <View style={styles.measurement}>
                <Text style={styles.measurementLabel}>HB Ajustada</Text>
-               <Text style={styles.measurementValue}>{visit.hbAdjusted.toFixed(1)} g/dL</Text>
+               <Text style={styles.measurementValue}>{Number(visit.hbAdjusted).toFixed(1)} g/dL</Text>
             </View>
          </View>
 

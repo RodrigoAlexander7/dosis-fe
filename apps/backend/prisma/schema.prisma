@@ -199,7 +199,6 @@ model Patient {
   dni          String     @id @db.Char(8)
   birthDate    DateTime   @map("birth_date") @db.Date
   gender       EnumGender
-  weight       Decimal?   @db.Decimal(5, 2)
   departmentId Int        @map("department_id")
   provinceId   Int        @map("province_id")
   districtId   Int        @map("district_id")
@@ -284,5 +283,6 @@ model SupplementDose {
 
   supplement Supplement @relation(fields: [idSupplement], references: [idSupplement])
 
+  @@unique([idSupplement, fromAgeDays, toAgeDays])
   @@map("supplement_doses")
 }
