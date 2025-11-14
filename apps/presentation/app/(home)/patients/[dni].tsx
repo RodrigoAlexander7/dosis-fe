@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import { patientsApi } from '@/services/api/patients.api';
 import { VisitCard } from '@/components/VisitCard';
 import { useAuthStore, canDeleteRecords, isMedicalStaff } from '@/stores/authStore';
+import { getErrorMessage } from '@/utils/errorHandler';
 
 export default function PatientDetailsScreen() {
    const { dni } = useLocalSearchParams<{ dni: string }>();
@@ -86,11 +87,6 @@ export default function PatientDetailsScreen() {
                   <Text style={styles.name}>DNI: {patient.dni}</Text>
                   <Text style={styles.subtitle}>
                      {age} años • {patient.gender === 'M' ? 'Masculino' : 'Femenino'}
-                  </Text>
-               </View>
-               <View style={[styles.statusBadge, !patient.isActive && styles.inactiveBadge]}>
-                  <Text style={styles.statusText}>
-                     {patient.isActive ? 'Activo' : 'Inactivo'}
                   </Text>
                </View>
             </View>

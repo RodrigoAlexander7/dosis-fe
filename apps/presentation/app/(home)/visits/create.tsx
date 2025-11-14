@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
    View,
    Text,
@@ -23,6 +23,7 @@ import { useSupplementCalculations } from '@/hooks/useSupplementCalculations';
 import { Picker } from 'react-native-ui-lib';
 import { Suplement, suplementSchema } from '@/modules/suplement/dto/suplement.dto';
 import suplement_information from '@/utils/json/suplement_information.json';
+import { getErrorMessage } from '@/utils/errorHandler';
 
 const suplementItems: Suplement[] = suplementSchema.array().parse(suplement_information);
 const suplementPickerItems = suplementItems.map((item) => ({
@@ -41,12 +42,19 @@ export default function CreateVisitScreen() {
 
    // Form state
    const [dni, setDni] = useState(urlDni || '');
-   const [searchedDni, setSearchedDni] = useState('');
+   const [searchedDni, setSearchedDni] = useState(urlDni || '');
    const [weight, setWeight] = useState('');
    const [hbObserved, setHbObserved] = useState('');
    const [femaleAditional, setFemaleAditional] = useState<'G' | 'P' | null>(null);
    const [gestationTime, setGestationTime] = useState<'1' | '2' | '3' | null>(null);
    const [selectedSupplementId, setSelectedSupplementId] = useState<string>('');
+
+   // Auto-load patient when URL has DNI
+   useEffect(() => {
+      if (urlDni && urlDni.length === 8) {
+         setSearchedDni(urlDni);
+      }
+   }, [urlDni]);
 
    // Query patient data
    const { data: patient, isLoading, refetch } = useQuery({

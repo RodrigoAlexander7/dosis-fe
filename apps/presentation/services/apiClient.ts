@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/authStore';
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
 
 // Crear instancia de axios
-const apiClient: AxiosInstance = axios.create({
+export const apiClient: AxiosInstance = axios.create({
    baseURL: API_URL,
    timeout: 30000, // Aumentado a 30 segundos para operaciones de creación
    headers: {

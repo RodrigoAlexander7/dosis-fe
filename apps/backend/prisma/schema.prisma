@@ -283,5 +283,6 @@ model SupplementDose {
 
   supplement Supplement @relation(fields: [idSupplement], references: [idSupplement])
 
+  @@unique([idSupplement, fromAgeDays, toAgeDays])
   @@map("supplement_doses")
 }

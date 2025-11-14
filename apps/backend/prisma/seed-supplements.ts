@@ -7,11 +7,13 @@ const prisma = new PrismaClient();
 async function main() {
    console.log('🌱 Starting seed for supplements...');
 
-   const supplementsPath = path.join(__dirname, '../../../apps/presentation/utils/json/suplement_information.json');
-   const supplementsAdultPath = path.join(__dirname, '../../../apps/presentation/utils/json/suplement_information_adult.json');
+   const supplementsPath = path.join(__dirname, '../../utils/json/suplement_information.json');
+   const supplementsAdultPath = path.join(__dirname, '../../utils/json/suplement_information_adult.json');
 
    const supplementsData = JSON.parse(fs.readFileSync(supplementsPath, 'utf-8'));
-   const supplementsAdultData = JSON.parse(fs.readFileSync(supplementsAdultPath, 'utf-8')); const allSupplements = [...supplementsData, ...supplementsAdultData];
+   const supplementsAdultData = JSON.parse(fs.readFileSync(supplementsAdultPath, 'utf-8'));
+
+   const allSupplements = [...supplementsData, ...supplementsAdultData];
 
    console.log(`📍 Creating ${allSupplements.length} supplements...`);
 
