@@ -86,7 +86,7 @@ export default function PatientDetailsScreen() {
                <View>
                   <Text style={styles.name}>DNI: {patient.dni}</Text>
                   <Text style={styles.subtitle}>
-                     {age} años • {patient.gender === 'M' ? 'Masculino' : 'Femenino'}
+                     {age} años • {patient.gender === 'MALE' ? 'Masculino' : 'Femenino'}
                   </Text>
                </View>
             </View>
@@ -168,9 +168,9 @@ export default function PatientDetailsScreen() {
             {patient.visits && patient.visits.length > 0 ? (
                patient.visits.map((visit) => (
                   <VisitCard
-                     key={visit.visitId}
+                     key={visit.id}
                      visit={visit}
-                     onPress={() => router.push(`/(home)/visits/${visit.visitId}`)}
+                     onPress={() => router.push(`/(home)/visits/${visit.id}`)}
                   />
                ))
             ) : (

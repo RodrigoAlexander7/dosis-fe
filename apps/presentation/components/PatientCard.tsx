@@ -54,7 +54,7 @@ export const PatientCard: React.FC<PatientCardProps> = ({
             <View style={styles.patientInfo}>
                <Text style={styles.name}>DNI: {patient.dni}</Text>
                <Text style={styles.subtitle}>
-                  {age} años • {patient.gender === 'M' ? 'Masculino' : 'Femenino'}
+                  {age} años • {patient.gender === 'MALE' ? 'Masculino' : 'Femenino'}
                </Text>
             </View>
             {latestVisit && (
@@ -94,10 +94,10 @@ export const PatientCard: React.FC<PatientCardProps> = ({
             )}
          </View>
 
-         {showDetails && patient.visits && (
+         {showDetails && latestVisit && (
             <View style={styles.visitsCount}>
                <Text style={styles.visitsText}>
-                  {patient.visits.length} {patient.visits.length === 1 ? 'visita' : 'visitas'}
+                  Última visita: {dayjs(latestVisit.visitDate).format('DD/MM/YYYY')}
                </Text>
             </View>
          )}

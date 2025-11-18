@@ -133,7 +133,6 @@ export default function PatientsListScreen() {
                   </TouchableOpacity>
                )}
             </View>
-
             {isLoading ? (
                <ActivityIndicator size="large" color="#2196F3" style={styles.loader} />
             ) : (
