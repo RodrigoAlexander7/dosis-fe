@@ -55,7 +55,7 @@ export interface Patient {
    town?: {
       id: string;
       name: string;
-      altitud: number;
+      altitudeAdjustment: string;
    };
    visits?: PatientVisit[];
    createdBy?: {

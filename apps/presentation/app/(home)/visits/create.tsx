@@ -16,20 +16,12 @@ import { TextField, Button, RadioGroup, RadioButton, Colors } from 'react-native
 import { Ionicons } from '@expo/vector-icons';
 import { visitsApi } from '@/services/api/visits.api';
 import { patientsApi } from '@/services/api/patients.api';
+import { supplementsApi } from '@/services/api/supplements.api';
 import { CreatePatientVisitDto } from '@/services/types/visit.types';
 import { Gender, FemaleAdditional, GestationTrimester, AnemiaSeverity } from '@/services/types/patient.types';
 import { useHemoglobinCalculations } from '@/hooks/useHemoglobinCalculations';
-import { useSupplementCalculations } from '@/hooks/useSupplementCalculations';
 import { Picker } from 'react-native-ui-lib';
-import { Suplement, suplementSchema } from '@/modules/suplement/dto/suplement.dto';
-import suplement_information from '@/utils/json/suplement_information.json';
 import { getErrorMessage } from '@/utils/errorHandler';
-
-const suplementItems: Suplement[] = suplementSchema.array().parse(suplement_information);
-const suplementPickerItems = suplementItems.map((item) => ({
-   label: item.name,
-   value: item.idSuplement,
-}));
 
 dayjs.locale('es');
 
@@ -38,15 +30,14 @@ export default function CreateVisitScreen() {
    const queryClient = useQueryClient();
    const { patientDni: urlDni } = useLocalSearchParams<{ patientDni?: string }>();
    const { calculate, mapExistingToBackend } = useHemoglobinCalculations();
-   const { calculateSupplement, getRecommendedSupplements } = useSupplementCalculations();
 
    // Form state
    const [dni, setDni] = useState(urlDni || '');
    const [searchedDni, setSearchedDni] = useState(urlDni || '');
    const [weight, setWeight] = useState('');
    const [hbObserved, setHbObserved] = useState('');
-   const [femaleAditional, setFemaleAditional] = useState<'G' | 'P' | null>(null);
-   const [gestationTime, setGestationTime] = useState<'1' | '2' | '3' | null>(null);
+   const [femaleAditional, setFemaleAditional] = useState<'G' | 'P' | ''>('');
+   const [gestationTime, setGestationTime] = useState<'1' | '2' | '3' | ''>('');
    const [selectedSupplementId, setSelectedSupplementId] = useState<string>('');
    const [prescriptionNotes, setPrescriptionNotes] = useState<string>('');
 
@@ -64,6 +55,20 @@ export default function CreateVisitScreen() {
       enabled: searchedDni.length === 8,
       retry: false,
    });
+
+   // Calculate patient age in days for supplement filtering
+   const patientAge = patient ? dayjs().diff(dayjs(patient.birthDate), 'year') : null;
+   const patientAgeDays = patient ? dayjs().diff(dayjs(patient.birthDate), 'day') : null;
+
+   // Query supplements based on patient age
+   const { data: supplements = [] } = useQuery({
+      queryKey: ['supplements', 'recommended', patientAgeDays],
+      queryFn: () => patientAgeDays ? supplementsApi.getRecommended(patientAgeDays) : supplementsApi.getAll(),
+      enabled: !!patient,
+   });
+
+   // Get selected supplement details
+   const selectedSupplement = supplements.find(s => s.idSupplement === selectedSupplementId);
 
    // Mutation
    const createMutation = useMutation({
@@ -110,16 +115,16 @@ export default function CreateVisitScreen() {
       // Mapear género del paciente
       const patientGender = patient.gender === Gender.MALE ? 'M' : 'F' as 'M' | 'F';
 
-      // Mapear tipos a formato backend
+      // Mapear tipos a formato backend (convertir string vacío a null)
       const backendTypes = mapExistingToBackend({
          gender: patientGender,
-         femaleAditional,
-         gestationTime,
+         femaleAditional: femaleAditional === '' ? null : femaleAditional,
+         gestationTime: gestationTime === '' ? null : gestationTime,
       });
 
       // Calcular hemoglobina ajustada y severidad
-      const altitudeAdjustment = patient.town?.altitud
-         ? getAltitudeAdjustment(patient.town.altitud)
+      const altitudeAdjustment = patient.town?.altitudeAdjustment
+         ? Number(patient.town.altitudeAdjustment)
          : 0;
 
       const calculations = calculate({
@@ -144,48 +149,46 @@ export default function CreateVisitScreen() {
       };
 
       // Agregar prescripción si hay suplemento seleccionado y cálculos disponibles
-      if (selectedSupplementId && supplementResult) {
+      if (selectedSupplementId && supplementDoseResult) {
+         const isAdult = patientAgeDays && patientAgeDays >= 5475; // 15 años = 5475 días
          const isAnemic = calculations.anemiaSeverity !== AnemiaSeverity.NONE;
-         const treatmentDays = supplementResult.isAdult
+         const treatmentDays = isAdult
             ? 180  // 6 meses para adultos
             : (isAnemic ? 180 : 90); // 6 meses si anémico, 3 meses prevención
 
          createDto.prescriptions = [{
             idSupplement: selectedSupplementId,
-            prescribedDose: supplementResult.doseAmount,
+            prescribedDose: supplementDoseResult.doseAmount,
             treatmentDurationDays: treatmentDays,
-            prescriptionNotes: prescriptionNotes || `${supplementResult.supplement.name} - ${supplementResult.doseAmount.toFixed(2)} ${supplementResult.unitMeasure} diarios`,
+            prescriptionNotes: prescriptionNotes || `${supplementDoseResult.supplement.name} - ${supplementDoseResult.doseAmount.toFixed(2)} mg diarios`,
          }];
       }
 
       createMutation.mutate(createDto);
    };
 
-   // Cálculo de ajuste por altitud (basado en lógica existente)
-   const getAltitudeAdjustment = (altitude: number): number => {
-      if (altitude < 1000) return 0;
-      if (altitude < 2000) return 0.2;
-      if (altitude < 3000) return 0.5;
-      if (altitude < 4000) return 0.8;
-      return 1.0;
+   // Calculate supplement dose based on patient data
+   const calculateSupplementDose = () => {
+      if (!selectedSupplement || !patient || !weight || !patientAgeDays) return null;
+
+      // Find appropriate dosing guideline for patient age
+      const dosingGuideline = selectedSupplement.dosingGuidelines.find(
+         guideline => patientAgeDays >= guideline.fromAgeDays && patientAgeDays <= guideline.toAgeDays
+      );
+
+      if (!dosingGuideline) return null;
+
+      // Calculate dose: weight * doseAmount mg/kg
+      const calculatedDose = Number(weight) * dosingGuideline.doseAmount;
+
+      return {
+         supplement: selectedSupplement,
+         doseAmount: calculatedDose,
+         guideline: dosingGuideline,
+      };
    };
 
-   const patientAge = patient ? dayjs().diff(dayjs(patient.birthDate), 'year') : null;
-
-   // Calcular suplemento si hay datos suficientes
-   const supplementResult = patient && weight && hbObserved ? calculateSupplement({
-      birthDate: patient.birthDate,
-      weight: Number(weight),
-      isAnemic: false, // Se actualiza después de calcular HB
-      gender: patient.gender,
-      supplementId: selectedSupplementId,
-   }) : null;
-
-   // Filtrar suplementos recomendados según edad
-   const recommendedSupplementIds = patient ? getRecommendedSupplements(patientAge!) : [];
-   const filteredSupplements = suplementPickerItems.filter(item =>
-      recommendedSupplementIds.includes(item.value)
-   );
+   const supplementDoseResult = calculateSupplementDose();
 
    return (
       <ScrollView style={styles.container}>
@@ -245,7 +248,7 @@ export default function CreateVisitScreen() {
                         Ubicación: {patient.town?.name}, {patient.district?.name}
                      </Text>
                      <Text style={styles.patientDetail}>
-                        Altitud: {patient.town?.altitud} msnm
+                        Ajuste por altitud: +{patient.town?.altitudeAdjustment} g/dL
                      </Text>
                      {patient.visits && patient.visits.length > 0 && (
                         <Text style={styles.patientDetail}>
@@ -304,7 +307,7 @@ export default function CreateVisitScreen() {
                               onValueChange={setFemaleAditional}
                            >
                               <View style={styles.radioColumn}>
-                                 <RadioButton value={null} label="Ninguna" color={Colors.primary} />
+                                 <RadioButton value="" label="Ninguna" color={Colors.primary} />
                                  <RadioButton value="G" label="Gestante" color={Colors.primary} />
                                  <RadioButton value="P" label="Puerperio" color={Colors.primary} />
                               </View>
@@ -333,7 +336,7 @@ export default function CreateVisitScreen() {
                      <View style={styles.adjustmentInfo}>
                         <Ionicons name="information-circle" size={20} color="#2196F3" />
                         <Text style={styles.adjustmentText}>
-                           Ajuste por altitud: {getAltitudeAdjustment(patient.town.altitud).toFixed(1)} g/dL
+                           Ajuste por altitud: +{patient.town.altitudeAdjustment} g/dL
                         </Text>
                      </View>
                   )}
@@ -344,62 +347,59 @@ export default function CreateVisitScreen() {
                   <View style={styles.card}>
                      <Text style={styles.sectionTitle}>Suplementación</Text>
 
-                     {!supplementResult?.isAdult && (
-                        <View style={styles.inputGroup}>
-                           <Text style={styles.label}>Tipo de Suplemento</Text>
-                           <Picker
-                              value={selectedSupplementId}
-                              items={filteredSupplements}
-                              onChange={(value) => setSelectedSupplementId(value as string)}
-                              style={styles.picker}
-                              placeholder="Seleccionar suplemento..."
-                              mode="SINGLE"
-                              showSearch
-                              searchPlaceholder="Buscar..."
-                           />
-                        </View>
-                     )}
+                     <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Tipo de Suplemento</Text>
+                        <Picker
+                           value={selectedSupplementId}
+                           items={supplements.map(s => ({ label: s.name, value: s.idSupplement }))}
+                           onChange={(value) => setSelectedSupplementId(value as string)}
+                           style={styles.picker}
+                           placeholder="Seleccionar suplemento..."
+                           showSearch
+                           searchPlaceholder="Buscar..."
+                        />
+                     </View>
 
-                     {supplementResult?.supplement && (
+                     {supplementDoseResult && (
                         <View style={styles.supplementResult}>
                            <View style={styles.supplementHeader}>
                               <Ionicons name="medical" size={24} color="#4CAF50" />
                               <Text style={styles.supplementTitle}>
-                                 {supplementResult.isAdult ? 'Tratamiento Adulto' : 'Tratamiento Pediátrico'}
+                                 {patientAgeDays && patientAgeDays >= 5475 ? 'Tratamiento Adulto' : 'Tratamiento Pediátrico'}
                               </Text>
                            </View>
 
                            <View style={styles.supplementDetails}>
                               <Text style={styles.supplementProduct}>
-                                 {supplementResult.supplement.name}
+                                 {supplementDoseResult.supplement.name}
                               </Text>
 
                               <View style={styles.doseInfo}>
                                  <Ionicons name="water" size={16} color="#666" />
                                  <Text style={styles.doseText}>
-                                    Dosis: {supplementResult.doseAmount.toFixed(2)} {supplementResult.unitMeasure} diarios
+                                    Dosis: {supplementDoseResult.doseAmount.toFixed(2)} mg diarios
                                  </Text>
                               </View>
 
                               <View style={styles.doseInfo}>
                                  <Ionicons name="calendar" size={16} color="#666" />
                                  <Text style={styles.doseText}>
-                                    Duración: {supplementResult.isAdult ? '6 meses (tratamiento)' : '6 meses si anémico, 3 meses prevención'}
+                                    Rango de edad: {supplementDoseResult.guideline.fromAgeDays} - {supplementDoseResult.guideline.toAgeDays} días
                                  </Text>
                               </View>
 
                               <View style={styles.doseInfo}>
-                                 <Ionicons name="cube" size={16} color="#666" />
+                                 <Ionicons name="fitness" size={16} color="#666" />
                                  <Text style={styles.doseText}>
-                                    {supplementResult.isAdult ? 'Tabletas' : 'Frascos'} necesarios: {supplementResult.bottleNumber}
+                                    Guía: {supplementDoseResult.guideline.doseAmount} mg/kg/día
                                  </Text>
                               </View>
 
-                              {supplementResult.supplement.notes && (
+                              {supplementDoseResult.supplement.notes && (
                                  <View style={styles.notesBox}>
                                     <Text style={styles.notesLabel}>Notas:</Text>
                                     <Text style={styles.notesText}>
-                                       {supplementResult.supplement.notes}
+                                       {supplementDoseResult.supplement.notes}
                                     </Text>
                                  </View>
                               )}
@@ -421,7 +421,7 @@ export default function CreateVisitScreen() {
                         </View>
                      )}
 
-                     {!supplementResult?.isAdult && !selectedSupplementId && (
+                     {!selectedSupplementId && (
                         <View style={styles.infoBox}>
                            <Ionicons name="information-circle-outline" size={20} color="#2196F3" />
                            <Text style={styles.infoText}>
