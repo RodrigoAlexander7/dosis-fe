@@ -168,9 +168,9 @@ export default function PatientDetailsScreen() {
             {patient.visits && patient.visits.length > 0 ? (
                patient.visits.map((visit) => (
                   <VisitCard
-                     key={visit.id}
+                     key={visit.visitId}
                      visit={visit}
-                     onPress={() => router.push(`/(home)/visits/${visit.id}`)}
+                     onPress={() => router.push(`/(home)/visits/${visit.visitId}`)}
                   />
                ))
             ) : (
