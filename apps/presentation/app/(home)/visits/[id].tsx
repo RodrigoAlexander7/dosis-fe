@@ -200,7 +200,7 @@ export default function VisitDetailsScreen() {
    const gestationLabel = getGestationLabel(visit.gestationTrimester);
 
    return (
-      <ScrollView 
+      <ScrollView
          style={styles.container}
          refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
