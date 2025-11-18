@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
    View,
    Text,
@@ -7,6 +7,7 @@ import {
    ActivityIndicator,
    TouchableOpacity,
    Alert,
+   RefreshControl,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -22,6 +23,7 @@ export default function VisitDetailsScreen() {
    const router = useRouter();
    const { user } = useAuthStore();
    const queryClient = useQueryClient();
+   const [refreshing, setRefreshing] = useState(false);
 
    // Redirect if trying to access create route through [id] pattern
    React.useEffect(() => {
@@ -34,7 +36,7 @@ export default function VisitDetailsScreen() {
    const visitId = id ? Number(id) : null;
    const isValidId = visitId !== null && !isNaN(visitId) && visitId > 0;
 
-   const { data: visit, isLoading, error } = useQuery({
+   const { data: visit, isLoading, error, refetch } = useQuery({
       queryKey: ['visit', visitId],
       queryFn: () => {
          console.log('Fetching visit with ID:', visitId);
@@ -53,6 +55,12 @@ export default function VisitDetailsScreen() {
          console.log('Visit ID:', id, 'Parsed:', visitId, 'Valid:', isValidId);
       }
    }, [error, id, visitId, isValidId]);
+
+   const onRefresh = React.useCallback(async () => {
+      setRefreshing(true);
+      await refetch();
+      setRefreshing(false);
+   }, [refetch]);
 
    const deleteMutation = useMutation({
       mutationFn: () => {
@@ -192,7 +200,12 @@ export default function VisitDetailsScreen() {
    const gestationLabel = getGestationLabel(visit.gestationTrimester);
 
    return (
-      <ScrollView style={styles.container}>
+      <ScrollView 
+         style={styles.container}
+         refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+         }
+      >
          {/* Visit Info Card */}
          <View style={styles.infoCard}>
             <View style={styles.header}>

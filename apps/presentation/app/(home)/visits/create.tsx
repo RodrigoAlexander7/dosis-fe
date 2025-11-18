@@ -48,6 +48,7 @@ export default function CreateVisitScreen() {
    const [femaleAditional, setFemaleAditional] = useState<'G' | 'P' | null>(null);
    const [gestationTime, setGestationTime] = useState<'1' | '2' | '3' | null>(null);
    const [selectedSupplementId, setSelectedSupplementId] = useState<string>('');
+   const [prescriptionNotes, setPrescriptionNotes] = useState<string>('');
 
    // Auto-load patient when URL has DNI
    useEffect(() => {
@@ -141,6 +142,21 @@ export default function CreateVisitScreen() {
          femaleAdditional: backendTypes.femaleAdditional,
          gestationTrimester: backendTypes.gestationTrimester,
       };
+
+      // Agregar prescripción si hay suplemento seleccionado y cálculos disponibles
+      if (selectedSupplementId && supplementResult) {
+         const isAnemic = calculations.anemiaSeverity !== AnemiaSeverity.NONE;
+         const treatmentDays = supplementResult.isAdult
+            ? 180  // 6 meses para adultos
+            : (isAnemic ? 180 : 90); // 6 meses si anémico, 3 meses prevención
+
+         createDto.prescriptions = [{
+            idSupplement: selectedSupplementId,
+            prescribedDose: supplementResult.doseAmount,
+            treatmentDurationDays: treatmentDays,
+            prescriptionNotes: prescriptionNotes || `${supplementResult.supplement.name} - ${supplementResult.doseAmount.toFixed(2)} ${supplementResult.unitMeasure} diarios`,
+         }];
+      }
 
       createMutation.mutate(createDto);
    };
@@ -388,6 +404,20 @@ export default function CreateVisitScreen() {
                                  </View>
                               )}
                            </View>
+
+                           {/* Campo de notas adicionales */}
+                           <View style={styles.inputGroup}>
+                              <Text style={styles.label}>Notas de la Prescripción (Opcional)</Text>
+                              <TextField
+                                 style={[styles.textInput, styles.textArea]}
+                                 value={prescriptionNotes}
+                                 onChangeText={setPrescriptionNotes}
+                                 placeholder="Ej: Tomar con jugo de naranja, evitar lácteos 2 horas antes..."
+                                 placeholderTextColor="#A0AEC0"
+                                 multiline
+                                 numberOfLines={3}
+                              />
+                           </View>
                         </View>
                      )}
 
@@ -485,6 +515,10 @@ const styles = StyleSheet.create({
       padding: 12,
       fontSize: 16,
       backgroundColor: '#fff',
+   },
+   textArea: {
+      minHeight: 80,
+      textAlignVertical: 'top',
    },
    radioColumn: {
       gap: 12,

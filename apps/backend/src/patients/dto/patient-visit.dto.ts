@@ -9,9 +9,47 @@ import {
    Matches,
    IsOptional,
    IsInt,
+   IsArray,
+   ValidateNested,
+   IsPositive,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { FemaleAdditional, GestationTrimester, AnemiaSeverity } from './patient.dto';
+
+export class CreatePrescriptionDto {
+   @ApiProperty({
+      description: 'ID del suplemento',
+      example: 'SUP001',
+   })
+   @IsString()
+   idSupplement: string;
+
+   @ApiProperty({
+      description: 'Dosis prescrita en mg',
+      example: 60,
+   })
+   @IsNumber()
+   @IsPositive()
+   prescribedDose: number;
+
+   @ApiProperty({
+      description: 'Duración del tratamiento en días',
+      example: 180,
+   })
+   @IsInt()
+   @IsPositive()
+   treatmentDurationDays: number;
+
+   @ApiProperty({
+      description: 'Notas adicionales sobre la prescripción',
+      example: 'Tomar con jugo de naranja para mejor absorción',
+      required: false,
+   })
+   @IsOptional()
+   @IsString()
+   prescriptionNotes?: string;
+}
 
 export class CreatePatientVisitDto {
    @ApiProperty({
@@ -80,6 +118,17 @@ export class CreatePatientVisitDto {
    })
    @IsEnum(GestationTrimester)
    gestationTrimester: GestationTrimester;
+
+   @ApiProperty({
+      description: 'Prescripciones asociadas a esta visita',
+      type: [CreatePrescriptionDto],
+      required: false,
+   })
+   @IsOptional()
+   @IsArray()
+   @ValidateNested({ each: true })
+   @Type(() => CreatePrescriptionDto)
+   prescriptions?: CreatePrescriptionDto[];
 }
 
 export class UpdatePatientVisitDto {
