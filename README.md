@@ -16,12 +16,13 @@ El objetivo a largo plazo es que **DosisFe** evolucione hasta convertirse en un 
 <div align="left"> <a href="https://reactnative.dev/"> <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native" /> </a> <a href="https://expo.dev/"> <img src="https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo" /> </a> <a href="https://www.typescriptlang.org/"> <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /> </a> <a href="https://callstack.github.io/react-native-paper/"> <img src="https://img.shields.io/badge/React_Native_Paper-6200EE?style=for-the-badge&logoColor=white" alt="React Native Paper" /> </a> <a href="https://wix.github.io/react-native-ui-lib/"> <img src="https://img.shields.io/badge/UI--Lib-E91E63?style=for-the-badge&logo=react&logoColor=white" alt="React Native UI Lib" /> </a> </div>
 * Actualmente backend en desarrollo (pronto para versiones futuras)
 
-## 🩺 Funcionalidades actuales
+## 📸 ScreenShots
+![WhatsApp Image 2025-11-18 at 20 26 44_9c88af47](https://github.com/user-attachments/assets/e787f4e2-7988-4578-8ef6-d5437a844b8c)
+![WhatsApp Image 2025-11-18 at 20 26 44_d553d370](https://github.com/user-attachments/assets/56d8afeb-51fa-43a8-8e18-c21d135e4ac3)
+![WhatsApp Image 2025-11-18 at 20 26 44_fa96c415](https://github.com/user-attachments/assets/e185e37d-6877-4eb3-a63c-fcea786c0446)
+![WhatsApp Image 2025-11-18 at 20 26 45_b8e0058e](https://github.com/user-attachments/assets/3b5ed867-e44f-459d-8615-60f657809734)
+![WhatsApp Image 2025-11-18 at 20 26 45_1e9504fe](https://github.com/user-attachments/assets/ced3cf01-917c-4742-a084-fb63123bd613)
 
-* Diagnóstico de anemia a partir de hemoglobina ajustada.
-* Formulario inteligente que considera género, embarazo, edad y altitud geográfica.
-* Ajuste automático del valor de hemoglobina según el centro poblado (altura geográfica).
-* Interfaz amigable y fácil de usar.
 
 ## 🛠️ Instalación y uso
 
