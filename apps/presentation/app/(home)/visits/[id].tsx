@@ -8,6 +8,7 @@ import {
    TouchableOpacity,
    Alert,
    RefreshControl,
+   Image,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -332,6 +333,60 @@ export default function VisitDetailsScreen() {
                </View>
             )}
 
+            {/* Prescriptions Section */}
+            {visit.prescriptions && visit.prescriptions.length > 0 && (
+               <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>
+                     <Ionicons name="medical" size={20} color="#4CAF50" /> Prescripción
+                  </Text>
+                  {visit.prescriptions.map((prescription) => (
+                     <View key={prescription.prescriptionId} style={styles.prescriptionCard}>
+                        {/* Supplement Image */}
+                        <Image
+                           source={{ uri: `/supplements/${prescription.supplement?.name}.jpg` }}
+                           style={styles.supplementImage}
+                           defaultSource={require('@/assets/icons/adaptive-icon.png')}
+                        />
+
+                        {/* Prescription Details */}
+                        <View style={styles.prescriptionDetails}>
+                           <Text style={styles.supplementName}>
+                              {prescription.supplement?.name || 'Suplemento desconocido'}
+                           </Text>
+
+                           <View style={styles.prescriptionRow}>
+                              <Ionicons name="water" size={16} color="#666" />
+                              <Text style={styles.prescriptionText}>
+                                 Dosis: {prescription.prescribedDose.toFixed(2)} {prescription.unitMeasure} por toma
+                              </Text>
+                           </View>
+
+                           <View style={styles.prescriptionRow}>
+                              <Ionicons name="calendar" size={16} color="#666" />
+                              <Text style={styles.prescriptionText}>
+                                 Duración: {prescription.treatmentMonths} {prescription.treatmentMonths === 1 ? 'mes' : 'meses'} ({prescription.treatmentDurationDays} días)
+                              </Text>
+                           </View>
+
+                           <View style={styles.prescriptionRow}>
+                              <Ionicons name="cube" size={16} color="#666" />
+                              <Text style={styles.prescriptionText}>
+                                 Cantidad: {prescription.numberOfBottles} {prescription.supplement?.presentation === 'TABLET' ? 'blisters' : 'frascos'}
+                              </Text>
+                           </View>
+
+                           {prescription.prescriptionNotes && (
+                              <View style={styles.prescriptionNotes}>
+                                 <Ionicons name="information-circle" size={16} color="#2196F3" />
+                                 <Text style={styles.notesText}>{prescription.prescriptionNotes}</Text>
+                              </View>
+                           )}
+                        </View>
+                     </View>
+                  ))}
+               </View>
+            )}
+
             {/* Created By Info */}
             {visit.createdBy && (
                <View style={styles.section}>
@@ -567,5 +622,37 @@ const styles = StyleSheet.create({
       color: '#fff',
       fontSize: 16,
       fontWeight: '600',
+   },
+   supplementImage: {
+      width: 80,
+      height: 80,
+      borderRadius: 8,
+      marginBottom: 12,
+      backgroundColor: '#E0E0E0',
+   },
+   prescriptionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginVertical: 4,
+   },
+   prescriptionText: {
+      fontSize: 14,
+      color: '#424242',
+      flex: 1,
+   },
+   prescriptionNotes: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 8,
+      marginTop: 8,
+      padding: 8,
+      backgroundColor: '#E3F2FD',
+      borderRadius: 6,
+   },
+   notesText: {
+      fontSize: 13,
+      color: '#1565C0',
+      flex: 1,
    },
 });

@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { visitsApi } from '@/services/api/visits.api';
 import { patientsApi } from '@/services/api/patients.api';
 import { supplementsApi } from '@/services/api/supplements.api';
+import { SupplementCalculatorService } from '@/services/supplement-calculator.service';
 import { CreatePatientVisitDto } from '@/services/types/visit.types';
 import { Gender, FemaleAdditional, GestationTrimester, AnemiaSeverity } from '@/services/types/patient.types';
 import { useHemoglobinCalculations } from '@/hooks/useHemoglobinCalculations';
@@ -39,6 +40,7 @@ export default function CreateVisitScreen() {
    const [femaleAditional, setFemaleAditional] = useState<'G' | 'P' | ''>('');
    const [gestationTime, setGestationTime] = useState<'1' | '2' | '3' | ''>('');
    const [selectedSupplementId, setSelectedSupplementId] = useState<string>('');
+   const [treatmentMonths, setTreatmentMonths] = useState<number>(1);
    const [prescriptionNotes, setPrescriptionNotes] = useState<string>('');
 
    // Auto-load patient when URL has DNI
@@ -148,28 +150,48 @@ export default function CreateVisitScreen() {
          gestationTrimester: backendTypes.gestationTrimester,
       };
 
-      // Agregar prescripción si hay suplemento seleccionado y cálculos disponibles
-      if (selectedSupplementId && supplementDoseResult) {
-         const isAdult = patientAgeDays && patientAgeDays >= 5475; // 15 años = 5475 días
+      // Agregar prescripción si hay suplemento seleccionado
+      if (selectedSupplementId && selectedSupplement && patientAgeDays) {
          const isAnemic = calculations.anemiaSeverity !== AnemiaSeverity.NONE;
-         const treatmentDays = isAdult
-            ? 180  // 6 meses para adultos
-            : (isAnemic ? 180 : 90); // 6 meses si anémico, 3 meses prevención
+         const isFemalePregnantOrLactating = femaleAditional === 'G' || femaleAditional === 'P';
 
-         createDto.prescriptions = [{
-            idSupplement: selectedSupplementId,
-            prescribedDose: supplementDoseResult.doseAmount,
-            treatmentDurationDays: treatmentDays,
-            prescriptionNotes: prescriptionNotes || `${supplementDoseResult.supplement.name} - ${supplementDoseResult.doseAmount.toFixed(2)} mg diarios`,
-         }];
+         // Find appropriate dosing guideline
+         const dosingGuideline = selectedSupplement.dosingGuidelines.find(
+            guideline => patientAgeDays >= guideline.fromAgeDays && patientAgeDays <= guideline.toAgeDays
+         );
+
+         if (dosingGuideline) {
+            // Calculate prescription using service
+            const prescriptionData = SupplementCalculatorService.calculatePrescription({
+               supplement: selectedSupplement,
+               patientAgeDays,
+               patientWeight: Number(weight),
+               isAnemic,
+               patientGender: patient.gender,
+               anemiaSeverity: calculations.anemiaSeverity,
+               treatmentMonths,
+               doseAmount: dosingGuideline.doseAmount,
+               isFemalePregnantOrLactating,
+            });
+
+            createDto.prescriptions = [{
+               idSupplement: selectedSupplementId,
+               prescribedDose: prescriptionData.prescribedDose,
+               treatmentDurationDays: prescriptionData.treatmentDurationDays,
+               treatmentMonths: treatmentMonths,
+               numberOfBottles: prescriptionData.numberOfBottles,
+               unitMeasure: prescriptionData.unitMeasure,
+               prescriptionNotes: prescriptionNotes || `${selectedSupplement.name} - ${prescriptionData.prescribedDose.toFixed(2)} ${prescriptionData.unitMeasure} por toma`,
+            }];
+         }
       }
 
       createMutation.mutate(createDto);
    };
 
-   // Calculate supplement dose based on patient data
-   const calculateSupplementDose = () => {
-      if (!selectedSupplement || !patient || !weight || !patientAgeDays) return null;
+   // Calculate supplement dose preview for UI with complete calculations
+   const supplementDosePreview = React.useMemo(() => {
+      if (!selectedSupplement || !patient || !weight || !patientAgeDays || !hbObserved) return null;
 
       // Find appropriate dosing guideline for patient age
       const dosingGuideline = selectedSupplement.dosingGuidelines.find(
@@ -178,17 +200,52 @@ export default function CreateVisitScreen() {
 
       if (!dosingGuideline) return null;
 
-      // Calculate dose: weight * doseAmount mg/kg
-      const calculatedDose = Number(weight) * dosingGuideline.doseAmount;
+      // Calculate hemoglobin to determine if anemic
+      const altitudeAdjustment = patient.town?.altitudeAdjustment
+         ? Number(patient.town.altitudeAdjustment)
+         : 0;
+
+      const patientGender = patient.gender === Gender.MALE ? 'M' : 'F' as 'M' | 'F';
+      const mappedFemaleAdditional = femaleAditional === '' ? null : femaleAditional;
+      const mappedGestationTime = gestationTime === '' ? null : gestationTime;
+
+      const backendTypes = mapExistingToBackend({
+         gender: patientGender,
+         femaleAditional: mappedFemaleAdditional,
+         gestationTime: mappedGestationTime,
+      });
+
+      const calculations = calculate({
+         hbObserved: Number(hbObserved),
+         altitudeAdjustment,
+         birthDate: patient.birthDate,
+         gender: backendTypes.gender,
+         femaleAdditional: backendTypes.femaleAdditional,
+         gestationTrimester: backendTypes.gestationTrimester,
+      });
+
+      const isAnemic = calculations.anemiaSeverity !== AnemiaSeverity.NONE;
+      const isFemalePregnantOrLactating = femaleAditional === 'G' || femaleAditional === 'P';
+
+      // Calculate full prescription data for preview
+      const prescriptionData = SupplementCalculatorService.calculatePrescription({
+         supplement: selectedSupplement,
+         patientAgeDays,
+         patientWeight: Number(weight),
+         isAnemic,
+         patientGender: patient.gender,
+         anemiaSeverity: calculations.anemiaSeverity,
+         treatmentMonths,
+         doseAmount: dosingGuideline.doseAmount,
+         isFemalePregnantOrLactating,
+      });
 
       return {
          supplement: selectedSupplement,
-         doseAmount: calculatedDose,
          guideline: dosingGuideline,
+         ...prescriptionData,
       };
-   };
-
-   const supplementDoseResult = calculateSupplementDose();
+   }, [selectedSupplement, patient, weight, patientAgeDays, hbObserved, femaleAditional, gestationTime, treatmentMonths]);
 
    return (
       <ScrollView style={styles.container}>
@@ -360,7 +417,27 @@ export default function CreateVisitScreen() {
                         />
                      </View>
 
-                     {supplementDoseResult && (
+                     {selectedSupplementId && (
+                        <View style={styles.inputGroup}>
+                           <Text style={styles.label}>Duración del Tratamiento (meses)</Text>
+                           <Picker
+                              value={treatmentMonths}
+                              items={[
+                                 { label: '1 mes', value: 1 },
+                                 { label: '2 meses', value: 2 },
+                                 { label: '3 meses', value: 3 },
+                                 { label: '4 meses', value: 4 },
+                                 { label: '5 meses', value: 5 },
+                                 { label: '6 meses', value: 6 },
+                              ]}
+                              onChange={(value) => setTreatmentMonths(value as number)}
+                              style={styles.picker}
+                              placeholder="Seleccionar duración..."
+                           />
+                        </View>
+                     )}
+
+                     {supplementDosePreview && (
                         <View style={styles.supplementResult}>
                            <View style={styles.supplementHeader}>
                               <Ionicons name="medical" size={24} color="#4CAF50" />
@@ -371,35 +448,49 @@ export default function CreateVisitScreen() {
 
                            <View style={styles.supplementDetails}>
                               <Text style={styles.supplementProduct}>
-                                 {supplementDoseResult.supplement.name}
+                                 {supplementDosePreview.supplement.name}
                               </Text>
 
                               <View style={styles.doseInfo}>
                                  <Ionicons name="water" size={16} color="#666" />
                                  <Text style={styles.doseText}>
-                                    Dosis: {supplementDoseResult.doseAmount.toFixed(2)} mg diarios
-                                 </Text>
-                              </View>
-
-                              <View style={styles.doseInfo}>
-                                 <Ionicons name="calendar" size={16} color="#666" />
-                                 <Text style={styles.doseText}>
-                                    Rango de edad: {supplementDoseResult.guideline.fromAgeDays} - {supplementDoseResult.guideline.toAgeDays} días
+                                    Dosis calculada: {supplementDosePreview.prescribedDose.toFixed(2)} {supplementDosePreview.unitMeasure} por toma
                                  </Text>
                               </View>
 
                               <View style={styles.doseInfo}>
                                  <Ionicons name="fitness" size={16} color="#666" />
                                  <Text style={styles.doseText}>
-                                    Guía: {supplementDoseResult.guideline.doseAmount} mg/kg/día
+                                    Guía: {supplementDosePreview.guideline.doseAmount} mg/kg/día
                                  </Text>
                               </View>
 
-                              {supplementDoseResult.supplement.notes && (
+                              <View style={styles.doseInfo}>
+                                 <Ionicons name="time" size={16} color="#666" />
+                                 <Text style={styles.doseText}>
+                                    Duración: {treatmentMonths} {treatmentMonths === 1 ? 'mes' : 'meses'} ({supplementDosePreview.treatmentDurationDays} días)
+                                 </Text>
+                              </View>
+
+                              <View style={styles.doseInfo}>
+                                 <Ionicons name="cube" size={16} color="#666" />
+                                 <Text style={styles.doseText}>
+                                    Cantidad necesaria: {supplementDosePreview.numberOfBottles} {supplementDosePreview.supplement.presentation === 'TABLET' ? 'blisters' : 'frascos'}
+                                 </Text>
+                              </View>
+
+                              <View style={styles.doseInfo}>
+                                 <Ionicons name="calendar-outline" size={16} color="#999" />
+                                 <Text style={[styles.doseText, { color: '#999', fontSize: 12 }]}>
+                                    Rango de edad: {supplementDosePreview.guideline.fromAgeDays} - {supplementDosePreview.guideline.toAgeDays} días
+                                 </Text>
+                              </View>
+
+                              {supplementDosePreview.supplement.notes && (
                                  <View style={styles.notesBox}>
                                     <Text style={styles.notesLabel}>Notas:</Text>
                                     <Text style={styles.notesText}>
-                                       {supplementDoseResult.supplement.notes}
+                                       {supplementDosePreview.supplement.notes}
                                     </Text>
                                  </View>
                               )}
