@@ -19,16 +19,7 @@ El objetivo a largo plazo es que **DosisFe** evolucione hasta convertirse en un 
 ## 📸 ScreenShots
 
 <div align="center">
-
-  <img src="https://github.com/user-attachments/assets/e787f4e2-7988-4578-8ef6-d5437a844b8c" width="250" style="margin:10px"/>
-  <img src="https://github.com/user-attachments/assets/56d8afeb-51fa-43a8-8e18-c21d135e4ac3" width="250" style="margin:10px"/>
-  <img src="https://github.com/user-attachments/assets/e185e37d-6877-4eb3-a63c-fcea786c0446" width="250" style="margin:10px"/>
-
-  <br/><br/>
-
-  <img src="https://github.com/user-attachments/assets/3b5ed867-e44f-459d-8615-60f657809734" width="250" style="margin:10px"/>
-  <img src="https://github.com/user-attachments/assets/ced3cf01-917c-4742-a084-fb63123bd613" width="250" style="margin:10px"/>
-
+  <img width="1920" height="1440" alt="projectDosisFe" src="https://github.com/user-attachments/assets/c312f655-3fa3-4a52-843b-4178e15a2af0" />
 </div>
 
 
