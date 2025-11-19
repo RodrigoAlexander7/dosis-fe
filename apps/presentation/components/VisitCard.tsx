@@ -137,6 +137,15 @@ export const VisitCard: React.FC<VisitCardProps> = ({
             </View>
          )}
 
+         {visit.prescriptions && visit.prescriptions.length > 0 && (
+            <View style={styles.prescriptionsInfo}>
+               <Ionicons name="medkit-outline" size={14} color="#2196F3" />
+               <Text style={styles.prescriptionsText}>
+                  {visit.prescriptions.length} {visit.prescriptions.length === 1 ? 'prescripción' : 'prescripciones'}
+               </Text>
+            </View>
+         )}
+
          {visit.createdBy && (
             <View style={styles.footer}>
                <Ionicons name="person-circle-outline" size={14} color="#999" />
@@ -234,6 +243,22 @@ const styles = StyleSheet.create({
    badgeText: {
       fontSize: 12,
       color: '#1976D2',
+      fontWeight: '500',
+   },
+   prescriptionsInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      marginBottom: 8,
+      paddingVertical: 6,
+      paddingHorizontal: 10,
+      backgroundColor: '#E8F5E9',
+      borderRadius: 6,
+      alignSelf: 'flex-start',
+   },
+   prescriptionsText: {
+      fontSize: 12,
+      color: '#2E7D32',
       fontWeight: '500',
    },
    footer: {

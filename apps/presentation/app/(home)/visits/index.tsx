@@ -146,10 +146,10 @@ export default function VisitsListScreen() {
                renderItem={({ item }) => (
                   <VisitCard
                      visit={item}
-                     onPress={() => router.push(`/(home)/visits/${item.id}` as any)}
+                     onPress={() => router.push(`/(home)/visits/${item.visitId}` as any)}
                   />
                )}
-               keyExtractor={(item) => item.id}
+               keyExtractor={(item) => item.visitId.toString()}
                contentContainerStyle={styles.listContent}
                ListEmptyComponent={
                   <View style={styles.emptyState}>

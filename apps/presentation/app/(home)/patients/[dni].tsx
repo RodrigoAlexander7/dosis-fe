@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
    View,
    Text,
@@ -7,6 +7,7 @@ import {
    TouchableOpacity,
    ActivityIndicator,
    Alert,
+   RefreshControl,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -22,12 +23,19 @@ export default function PatientDetailsScreen() {
    const router = useRouter();
    const { user } = useAuthStore();
    const queryClient = useQueryClient();
+   const [refreshing, setRefreshing] = useState(false);
 
-   const { data: patient, isLoading } = useQuery({
+   const { data: patient, isLoading, refetch } = useQuery({
       queryKey: ['patient', dni],
       queryFn: () => patientsApi.getByDni(dni!),
       enabled: !!dni,
    });
+
+   const onRefresh = React.useCallback(async () => {
+      setRefreshing(true);
+      await refetch();
+      setRefreshing(false);
+   }, [refetch]);
 
    const deleteMutation = useMutation({
       mutationFn: () => patientsApi.delete(dni!),
@@ -79,7 +87,12 @@ export default function PatientDetailsScreen() {
    const age = dayjs().diff(dayjs(patient.birthDate), 'year');
 
    return (
-      <ScrollView style={styles.container}>
+      <ScrollView
+         style={styles.container}
+         refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+         }
+      >
          {/* Patient Info Card */}
          <View style={styles.infoCard}>
             <View style={styles.header}>
@@ -168,9 +181,9 @@ export default function PatientDetailsScreen() {
             {patient.visits && patient.visits.length > 0 ? (
                patient.visits.map((visit) => (
                   <VisitCard
-                     key={visit.id}
+                     key={visit.visitId}
                      visit={visit}
-                     onPress={() => router.push(`/(home)/visits/${visit.id}`)}
+                     onPress={() => router.push(`/(home)/visits/${visit.visitId}` as any)}
                   />
                ))
             ) : (

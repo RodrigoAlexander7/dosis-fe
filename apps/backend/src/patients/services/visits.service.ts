@@ -32,6 +32,20 @@ export class VisitsService {
          );
       }
 
+      // Verify supplements exist if prescriptions are provided
+      if (dto.prescriptions && dto.prescriptions.length > 0) {
+         const supplementIds = dto.prescriptions.map((p) => p.idSupplement);
+         const supplements = await this.prisma.supplement.findMany({
+            where: { idSupplement: { in: supplementIds } },
+         });
+
+         if (supplements.length !== supplementIds.length) {
+            throw new NotFoundException(
+               'Uno o más suplementos no fueron encontrados',
+            );
+         }
+      }
+
       const visit = await this.prisma.patientVisit.create({
          data: {
             patientDni: dto.patientDni,
@@ -43,6 +57,16 @@ export class VisitsService {
             femaleAdditional: dto.femaleAdditional as any,
             gestationTrimester: dto.gestationTrimester as any,
             createdById: userId,
+            prescriptions: dto.prescriptions
+               ? {
+                  create: dto.prescriptions.map((p) => ({
+                     idSupplement: p.idSupplement,
+                     prescribedDose: p.prescribedDose,
+                     treatmentDurationDays: p.treatmentDurationDays,
+                     prescriptionNotes: p.prescriptionNotes || '',
+                  })),
+               }
+               : undefined,
          },
          include: {
             patient: {
@@ -59,6 +83,11 @@ export class VisitsService {
                   name: true,
                   email: true,
                   role: true,
+               },
+            },
+            prescriptions: {
+               include: {
+                  supplement: true,
                },
             },
          },

@@ -1,5 +1,13 @@
 import { AnemiaSeverity, FemaleAdditional, GestationTrimester } from './patient.types';
 
+// Prescription DTO
+export interface CreatePrescriptionDto {
+   idSupplement: string;
+   prescribedDose: number;
+   treatmentDurationDays: number;
+   prescriptionNotes?: string;
+}
+
 // Visit DTOs
 export interface CreatePatientVisitDto {
    patientDni: string;
@@ -10,6 +18,7 @@ export interface CreatePatientVisitDto {
    anemiaSeverity: AnemiaSeverity;
    femaleAdditional: FemaleAdditional;
    gestationTrimester: GestationTrimester;
+   prescriptions?: CreatePrescriptionDto[];
 }
 
 export interface UpdatePatientVisitDto {

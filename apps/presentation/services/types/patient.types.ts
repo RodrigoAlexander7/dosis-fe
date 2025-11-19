@@ -55,7 +55,7 @@ export interface Patient {
    town?: {
       id: string;
       name: string;
-      altitud: number;
+      altitudeAdjustment: string;
    };
    visits?: PatientVisit[];
    createdBy?: {
@@ -66,9 +66,30 @@ export interface Patient {
    };
 }
 
+export interface Supplement {
+   idSupplement: string;
+   name: string;
+   type: string;
+   presentation: 'TABLET' | 'SYRUP' | 'DROPS' | 'POWDER';
+   elementalIron: number;
+   content: number;
+   notes: string;
+}
+
+export interface Prescription {
+   prescriptionId: number;
+   visitId: number;
+   idSupplement: string;
+   prescribedDose: number;
+   treatmentDurationDays: number;
+   prescriptionNotes: string;
+   createdAt: string;
+   supplement?: Supplement;
+}
+
 export interface PatientVisit {
-   id: number;
-   patientId: string;
+   visitId: number;
+   patientDni: string;
    visitDate: string;
    weight: number;
    hbObserved: number;
@@ -77,14 +98,13 @@ export interface PatientVisit {
    femaleAdditional: FemaleAdditional;
    gestationTrimester: GestationTrimester;
    createdAt: string;
-   updatedAt: string;
    createdById: string;
-   updatedById: string | null;
    createdBy?: {
       id: string;
       name: string;
       role: string;
    };
+   prescriptions?: Prescription[];
 }
 
 // DTOs
