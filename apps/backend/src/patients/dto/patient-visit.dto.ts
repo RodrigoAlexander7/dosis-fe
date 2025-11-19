@@ -26,8 +26,8 @@ export class CreatePrescriptionDto {
    idSupplement: string;
 
    @ApiProperty({
-      description: 'Dosis prescrita en mg',
-      example: 60,
+      description: 'Dosis prescrita por toma (ml, gotas o tabletas)',
+      example: 5.5,
    })
    @IsNumber()
    @IsPositive()
@@ -40,6 +40,31 @@ export class CreatePrescriptionDto {
    @IsInt()
    @IsPositive()
    treatmentDurationDays: number;
+
+   @ApiProperty({
+      description: 'Duración del tratamiento en meses (1-6)',
+      example: 6,
+      default: 1,
+   })
+   @IsInt()
+   @Min(1)
+   @Max(6)
+   treatmentMonths: number;
+
+   @ApiProperty({
+      description: 'Número de frascos o blisters necesarios',
+      example: 3,
+   })
+   @IsInt()
+   @IsPositive()
+   numberOfBottles: number;
+
+   @ApiProperty({
+      description: 'Unidad de medida (gotas, ml, tabletas)',
+      example: 'ml',
+   })
+   @IsString()
+   unitMeasure: string;
 
    @ApiProperty({
       description: 'Notas adicionales sobre la prescripción',

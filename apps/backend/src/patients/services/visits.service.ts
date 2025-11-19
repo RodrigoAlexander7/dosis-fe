@@ -63,7 +63,10 @@ export class VisitsService {
                      idSupplement: p.idSupplement,
                      prescribedDose: p.prescribedDose,
                      treatmentDurationDays: p.treatmentDurationDays,
-                     prescriptionNotes: p.prescriptionNotes || '',
+                     treatmentMonths: p.treatmentMonths,
+                     numberOfBottles: p.numberOfBottles,
+                     unitMeasure: p.unitMeasure,
+                     prescriptionNotes: p.prescriptionNotes || null,
                   })),
                }
                : undefined,
