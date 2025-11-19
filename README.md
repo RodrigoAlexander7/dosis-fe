@@ -17,11 +17,19 @@ El objetivo a largo plazo es que **DosisFe** evolucione hasta convertirse en un 
 * Actualmente backend en desarrollo (pronto para versiones futuras)
 
 ## 📸 ScreenShots
-![WhatsApp Image 2025-11-18 at 20 26 44_9c88af47](https://github.com/user-attachments/assets/e787f4e2-7988-4578-8ef6-d5437a844b8c)
-![WhatsApp Image 2025-11-18 at 20 26 44_d553d370](https://github.com/user-attachments/assets/56d8afeb-51fa-43a8-8e18-c21d135e4ac3)
-![WhatsApp Image 2025-11-18 at 20 26 44_fa96c415](https://github.com/user-attachments/assets/e185e37d-6877-4eb3-a63c-fcea786c0446)
-![WhatsApp Image 2025-11-18 at 20 26 45_b8e0058e](https://github.com/user-attachments/assets/3b5ed867-e44f-459d-8615-60f657809734)
-![WhatsApp Image 2025-11-18 at 20 26 45_1e9504fe](https://github.com/user-attachments/assets/ced3cf01-917c-4742-a084-fb63123bd613)
+
+<div align="center">
+
+  <img src="https://github.com/user-attachments/assets/e787f4e2-7988-4578-8ef6-d5437a844b8c" width="210"/>
+  <img src="https://github.com/user-attachments/assets/56d8afeb-51fa-43a8-8e18-c21d135e4ac3" width="210"/>
+  <img src="https://github.com/user-attachments/assets/e185e37d-6877-4eb3-a63c-fcea786c0446" width="210"/>
+
+  <br/>
+
+  <img src="https://github.com/user-attachments/assets/3b5ed867-e44f-459d-8615-60f657809734" width="210"/>
+  <img src="https://github.com/user-attachments/assets/ced3cf01-917c-4742-a084-fb63123bd613" width="210"/>
+
+</div>
 
 
 ## 🛠️ Instalación y uso
