@@ -7,6 +7,7 @@ import {
    TouchableOpacity,
    Alert,
    ActivityIndicator,
+   Image,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -23,8 +24,30 @@ import { Gender, FemaleAdditional, GestationTrimester, AnemiaSeverity } from '@/
 import { useHemoglobinCalculations } from '@/hooks/useHemoglobinCalculations';
 import { Picker } from 'react-native-ui-lib';
 import { getErrorMessage } from '@/utils/errorHandler';
+import { getSupplementImage, defaultSupplementImage } from '@/utils/supplementImages';
 
 dayjs.locale('es');
+
+// Helper functions
+const getSeverityColor = (severity: AnemiaSeverity): string => {
+   switch (severity) {
+      case AnemiaSeverity.NONE: return '#4CAF50';
+      case AnemiaSeverity.MILD: return '#FFC107';
+      case AnemiaSeverity.MODERATE: return '#FF9800';
+      case AnemiaSeverity.SEVERE: return '#F44336';
+      default: return '#666';
+   }
+};
+
+const getSeverityLabel = (severity: AnemiaSeverity): string => {
+   switch (severity) {
+      case AnemiaSeverity.NONE: return 'Sin Anemia';
+      case AnemiaSeverity.MILD: return 'Anemia Leve';
+      case AnemiaSeverity.MODERATE: return 'Anemia Moderada';
+      case AnemiaSeverity.SEVERE: return 'Anemia Severa';
+      default: return 'Desconocido';
+   }
+};
 
 export default function CreateVisitScreen() {
    const router = useRouter();
@@ -247,7 +270,29 @@ export default function CreateVisitScreen() {
       };
    }, [selectedSupplement, patient, weight, patientAgeDays, hbObserved, femaleAditional, gestationTime, treatmentMonths]);
 
-   return (
+   // Calculate anemia diagnosis for display
+   const anemiaDiagnosis = React.useMemo(() => {
+      if (!patient || !weight || !hbObserved) return null;
+
+      const altitudeAdjustment = patient.town?.altitudeAdjustment ? Number(patient.town.altitudeAdjustment) : 0;
+      const patientGender = patient.gender === Gender.MALE ? 'M' : 'F' as 'M' | 'F';
+      const mappedFemaleAdditional = femaleAditional === '' ? null : femaleAditional;
+      const mappedGestationTime = gestationTime === '' ? null : gestationTime;
+      const backendTypes = mapExistingToBackend({
+         gender: patientGender,
+         femaleAditional: mappedFemaleAdditional,
+         gestationTime: mappedGestationTime,
+      });
+
+      return calculate({
+         hbObserved: Number(hbObserved),
+         altitudeAdjustment,
+         birthDate: patient.birthDate,
+         gender: backendTypes.gender,
+         femaleAdditional: backendTypes.femaleAdditional,
+         gestationTrimester: backendTypes.gestationTrimester,
+      });
+   }, [patient, weight, hbObserved, femaleAditional, gestationTime]); return (
       <ScrollView style={styles.container}>
          <View style={styles.header}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -397,6 +442,23 @@ export default function CreateVisitScreen() {
                         </Text>
                      </View>
                   )}
+
+                  {/* Anemia Diagnosis Display */}
+                  {anemiaDiagnosis && (
+                     <View style={[styles.diagnosisCard, { backgroundColor: getSeverityColor(anemiaDiagnosis.anemiaSeverity) + '20', borderColor: getSeverityColor(anemiaDiagnosis.anemiaSeverity) }]}>
+                        <View style={styles.diagnosisHeader}>
+                           <Ionicons name="fitness" size={24} color={getSeverityColor(anemiaDiagnosis.anemiaSeverity)} />
+                           <Text style={styles.diagnosisTitle}>Diagnóstico</Text>
+                        </View>
+                        <View style={styles.diagnosisContent}>
+                           <Text style={styles.diagnosisLabel}>Hemoglobina Ajustada:</Text>
+                           <Text style={styles.diagnosisValue}>{anemiaDiagnosis.hbAdjusted.toFixed(2)} g/dL</Text>
+                        </View>
+                        <View style={[styles.diagnosisBadge, { backgroundColor: getSeverityColor(anemiaDiagnosis.anemiaSeverity) }]}>
+                           <Text style={styles.diagnosisBadgeText}>{getSeverityLabel(anemiaDiagnosis.anemiaSeverity)}</Text>
+                        </View>
+                     </View>
+                  )}
                </View>
 
                {/* Supplement Selection */}
@@ -445,6 +507,13 @@ export default function CreateVisitScreen() {
                                  {patientAgeDays && patientAgeDays >= 5475 ? 'Tratamiento Adulto' : 'Tratamiento Pediátrico'}
                               </Text>
                            </View>
+
+                           {/* Supplement Image */}
+                           <Image
+                              source={getSupplementImage(supplementDosePreview.supplement.name) || defaultSupplementImage}
+                              style={styles.supplementImage}
+                              resizeMode="contain"
+                           />
 
                            <View style={styles.supplementDetails}>
                               <Text style={styles.supplementProduct}>
@@ -709,6 +778,14 @@ const styles = StyleSheet.create({
       fontWeight: '600',
       color: '#2E7D32',
    },
+   supplementImage: {
+      width: 120,
+      height: 120,
+      borderRadius: 8,
+      marginBottom: 16,
+      backgroundColor: '#E0E0E0',
+      alignSelf: 'center',
+   },
    supplementDetails: {
       gap: 12,
    },
@@ -759,5 +836,46 @@ const styles = StyleSheet.create({
       flex: 1,
       fontSize: 13,
       color: '#1976D2',
+   },
+   diagnosisCard: {
+      marginTop: 16,
+      padding: 16,
+      borderRadius: 12,
+      borderWidth: 2,
+   },
+   diagnosisHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      marginBottom: 12,
+   },
+   diagnosisTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#212121',
+   },
+   diagnosisContent: {
+      marginBottom: 12,
+   },
+   diagnosisLabel: {
+      fontSize: 14,
+      color: '#666',
+      marginBottom: 4,
+   },
+   diagnosisValue: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: '#212121',
+   },
+   diagnosisBadge: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+      alignSelf: 'flex-start',
+   },
+   diagnosisBadgeText: {
+      color: '#fff',
+      fontSize: 14,
+      fontWeight: '600',
    },
 });

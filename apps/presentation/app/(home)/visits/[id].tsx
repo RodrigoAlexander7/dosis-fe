@@ -18,6 +18,7 @@ import { visitsApi } from '@/services/api/visits.api';
 import { AnemiaSeverity, FemaleAdditional, GestationTrimester } from '@/services/types/patient.types';
 import { useAuthStore, canDeleteRecords } from '@/stores/authStore';
 import { getErrorMessage } from '@/utils/errorHandler';
+import { getSupplementImage, defaultSupplementImage } from '@/utils/supplementImages';
 
 export default function VisitDetailsScreen() {
    const { id } = useLocalSearchParams<{ id: string }>();
@@ -343,9 +344,9 @@ export default function VisitDetailsScreen() {
                      <View key={prescription.prescriptionId} style={styles.prescriptionCard}>
                         {/* Supplement Image */}
                         <Image
-                           source={{ uri: `/supplements/${prescription.supplement?.name}.jpg` }}
+                           source={getSupplementImage(prescription.supplement?.name) || defaultSupplementImage}
                            style={styles.supplementImage}
-                           defaultSource={require('@/assets/icons/adaptive-icon.png')}
+                           resizeMode="contain"
                         />
 
                         {/* Prescription Details */}
@@ -357,7 +358,7 @@ export default function VisitDetailsScreen() {
                            <View style={styles.prescriptionRow}>
                               <Ionicons name="water" size={16} color="#666" />
                               <Text style={styles.prescriptionText}>
-                                 Dosis: {prescription.prescribedDose.toFixed(2)} {prescription.unitMeasure} por toma
+                                 Dosis: {Number(prescription.prescribedDose).toFixed(0)} {prescription.unitMeasure} por toma
                               </Text>
                            </View>
 

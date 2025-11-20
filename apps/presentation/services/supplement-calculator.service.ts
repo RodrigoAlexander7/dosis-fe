@@ -70,7 +70,7 @@ export class SupplementCalculatorService {
 
       if (isAnemic) {
          // Dosis completa para anémicos: peso * doseAmount / hierro elemental
-         dailyDoseML = (patientWeight * doseAmount) / supplement.elementalIron;
+         dailyDoseML = (patientWeight * 3) / supplement.elementalIron;
       } else {
          // 2/3 de la dosis para prevención
          dailyDoseML = (patientWeight * (2 / 3) * doseAmount) / supplement.elementalIron;
