@@ -482,7 +482,7 @@ export default function CreateVisitScreen() {
                               <View style={styles.doseInfo}>
                                  <Ionicons name="calendar-outline" size={16} color="#999" />
                                  <Text style={[styles.doseText, { color: '#999', fontSize: 12 }]}>
-                                    Rango de edad: {supplementDosePreview.guideline.fromAgeDays} - {supplementDosePreview.guideline.toAgeDays} días
+                                    Rango de edad: {(supplementDosePreview.guideline.fromAgeDays / 365).toFixed(1)} - {(supplementDosePreview.guideline.toAgeDays / 365).toFixed(1)} años
                                  </Text>
                               </View>
 

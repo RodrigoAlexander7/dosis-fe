@@ -77,19 +77,29 @@ export class SupplementCalculatorService {
       }
 
       // Convertir a gotas si es presentación de gotas (1ml = 20 gotas)
-      let dosePerDay: number;
+      // La dosis mostrada es por toma, no por día
+      let dosePerIntake: number;
+      let numberOfBottles: number;
+
       if (supplement.presentation === 'DROPS') {
-         dosePerDay = dailyDoseML * 20; // Convertir ml a gotas
+         // Para gotas: convertir ml a gotas, la dosis es única toma diaria
+         dosePerIntake = Math.round(dailyDoseML * 20); // Convertir ml a gotas y redondear
+
+         // Calcular número de frascos: content está en ML, pero calculamos en gotas
+         const totalDrops = dosePerIntake * treatmentDurationDays;
+         const dropsPerBottle = supplement.content * 20; // Convertir contenido de ml a gotas
+         numberOfBottles = Math.ceil(totalDrops / dropsPerBottle);
       } else {
-         dosePerDay = dailyDoseML;
+         // Para jarabe (SYRUP): la dosis en ml es por toma única diaria
+         dosePerIntake = Math.round(dailyDoseML); // Redondear a entero (ej: 9.7 → 10 ml)
+
+         // Calcular número de frascos basado en ml diarios totales
+         const totalML = dailyDoseML * treatmentDurationDays;
+         numberOfBottles = Math.ceil(totalML / supplement.content);
       }
 
-      // Calcular número de frascos
-      const totalML = dailyDoseML * treatmentDurationDays;
-      const numberOfBottles = Math.ceil(totalML / supplement.content);
-
       return {
-         dosePerDay,
+         dosePerDay: dosePerIntake,
          numberOfBottles,
       };
    }
