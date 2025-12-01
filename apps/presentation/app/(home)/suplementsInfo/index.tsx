@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Row, Rows, Table } from "react-native-table-component";
+import { AppColors } from '@/utils/styles/colors';
 
 export default function ExampleOne() {
    const [tableHead] = useState([
@@ -61,7 +62,7 @@ export default function ExampleOne() {
    return (
       <ScrollView horizontal={true}>
          <View style={styles.container}>
-            <Table borderStyle={{ borderWidth: 2, borderColor: "#c8e1ff" }}>
+            <Table borderStyle={{ borderWidth: 2, borderColor: AppColors.info }}>
                <Row data={tableHead} style={styles.head} textStyle={styles.text} widthArr={[70, 200, 100, 80, 120, 80, 80, 100]} />
                <Rows data={tableData} textStyle={styles.text} widthArr={[70, 200, 100, 80, 120, 80, 80, 100]} />
             </Table>
@@ -71,7 +72,7 @@ export default function ExampleOne() {
 }
 
 const styles = StyleSheet.create({
-   container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: "#fff" },
-   head: { minHeight: 60, backgroundColor: "#f1f8ff" },
-   text: { margin: 6, textAlign: "center", color: 'black' },
+   container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: AppColors.background.primary },
+   head: { minHeight: 60, backgroundColor: AppColors.background.info },
+   text: { margin: 6, textAlign: "center", color: AppColors.text.primary },
 });

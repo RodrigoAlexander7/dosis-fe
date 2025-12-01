@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text } from "react-native";
 import { Button, View } from "react-native-ui-lib";
+import { AppColors } from '@/utils/styles/colors';
 
 export const TreatmentButton = () => {
    const { suplementStore } = useSuplementStore();
@@ -24,7 +25,7 @@ export const TreatmentButton = () => {
          <Button
             label="Calcular tratamiento"
             size={Button.sizes.large}
-            backgroundColor="#1a73e8"
+            backgroundColor={AppColors.primary}
             borderRadius={12}
             onPress={() => {
                setDoseNumber(getDose(suplementStore, ageDays, patient.weight || 0, true))
@@ -45,7 +46,7 @@ export const TreatmentButton = () => {
                <Button
                   label="Nuevo Paciente"
                   size={Button.sizes.large}
-                  backgroundColor="#1a73e8"
+                  backgroundColor={AppColors.primary}
                   borderRadius={12}
                   onPress={handleSubmit}
                />
@@ -63,12 +64,12 @@ const styles = StyleSheet.create({
    },
    resultBox: {
       marginTop: 20,
-      backgroundColor: "#F0FFF4",
+      backgroundColor: AppColors.background.success,
       padding: 16,
       borderRadius: 12,
       borderLeftWidth: 4,
-      borderLeftColor: "#38A169",
-      shadowColor: "#000",
+      borderLeftColor: AppColors.success,
+      shadowColor: AppColors.shadow,
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 3,
@@ -76,17 +77,17 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 18,
       fontWeight: "700",
-      color: "#2D3748",
+      color: AppColors.text.primary,
       marginBottom: 12,
       textAlign: "center",
    },
    text: {
       fontSize: 16,
-      color: "#2D3748",
+      color: AppColors.text.primary,
       marginBottom: 6,
    },
    highlight: {
       fontWeight: "bold",
-      color: "#2F855A",
+      color: AppColors.success,
    },
 });

@@ -1,6 +1,7 @@
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Colors, Picker } from "react-native-ui-lib";
 import { suplementImages } from "../constants/suplementImages";
+import { AppColors } from '@/utils/styles/colors';
 import { useSuplementPicker } from "../hooks/useSuplementPicker";
 import { getInfoToString } from "../services/suplement.service";
 
@@ -22,7 +23,7 @@ export function SuplementPicker() {
                   style={styles.picker}
                   preset='outline'
                   placeholder='Seleccionar tipo de suplementación'
-                  placeholderTextColor="#A0AEC0"
+                  placeholderTextColor={AppColors.text.placeholder}
                   spellCheck={false}
                   showSearch
                   searchPlaceholder="Buscar suplemento..."
@@ -65,13 +66,13 @@ const styles = StyleSheet.create({
    container: {
       flexGrow: 1,
       padding: 20,
-      backgroundColor: '#F4F7FC',
+      backgroundColor: AppColors.background.secondary,
    },
    formContainer: {
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background.primary,
       borderRadius: 16,
       padding: 20,
-      shadowColor: "#000",
+      shadowColor: AppColors.shadow,
       shadowOffset: {
          width: 0,
          height: 2,
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 22,
       fontWeight: '700',
-      color: '#1a73e8',
+      color: AppColors.primary,
       textAlign: 'center',
       marginBottom: 20,
    },
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
    label: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#2D3748',
+      color: AppColors.text.primary,
       marginBottom: 8,
    },
    picker: {
@@ -101,13 +102,13 @@ const styles = StyleSheet.create({
    },
    pickerField: {
       borderWidth: 1,
-      borderColor: '#E2E8F0',
+      borderColor: AppColors.border.medium,
       borderRadius: 12,
       padding: 12,
-      backgroundColor: '#F7FAFC',
+      backgroundColor: AppColors.background.tertiary,
    },
    searchStyle: {
-      color: '#2D3748',
+      color: AppColors.text.primary,
    },
    infoContainer: {
       marginTop: 15,
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
    infoTitle: {
       fontSize: 18,
       fontWeight: '600',
-      color: '#2D3748',
+      color: AppColors.text.primary,
       marginBottom: 10,
       textAlign: 'center',
    },
@@ -127,16 +128,16 @@ const styles = StyleSheet.create({
       borderRadius: 12, // 🔹 esquinas redondeadas para mejor estética
    },
    infoBox: {
-      backgroundColor: '#F0FFF4',
+      backgroundColor: AppColors.background.success,
       borderRadius: 12,
       padding: 16,
       borderLeftWidth: 4,
-      borderLeftColor: '#38A169',
+      borderLeftColor: AppColors.success,
       width: "100%",
    },
    infoText: {
       fontSize: 14,
-      color: '#2F855A',
+      color: AppColors.success,
       lineHeight: 20,
       textAlign: 'center',
    },

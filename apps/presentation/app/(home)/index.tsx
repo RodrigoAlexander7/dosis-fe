@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, Spacings } from 'react-native-ui-lib';
 import UserProfile from '@/components/UserProfile';
 import { useAuthStore, isAdmin, isMedicalStaff } from '@/stores/authStore';
+import { AppColors } from '@/utils/styles/colors';
 
 const theme = {
   borderRadius: 24,
@@ -177,7 +178,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#F4F7FC',
+    backgroundColor: AppColors.background.secondary,
   },
   contentContainer: {
     flexGrow: 1,
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius,
     padding: theme.padding,
     marginBottom: Spacings.s8,
-    shadowColor: "#1a73e8",
+    shadowColor: AppColors.primary,
 
     shadowOffset: {
       width: 0,
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#1a73e8',
+    color: AppColors.primary,
 
     textAlign: 'center',
     fontFamily: 'System',
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     fontWeight: '400',
-    color: '#5f6368',
+    color: AppColors.text.secondary,
     textAlign: 'center',
     fontFamily: 'System',
 
@@ -254,12 +255,12 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   primaryButton: {
-    backgroundColor: '#1a73e8',
-    borderColor: '#1a73e8',
+    backgroundColor: AppColors.secondary,
+    borderColor: AppColors.primary,
   },
   secondaryButton: {
-    backgroundColor: '#4285f4',
-    borderColor: '#4285f4',
+    backgroundColor: AppColors.info,
+    borderColor: AppColors.info,
   },
   buttonLabel: {
     fontSize: 16,
@@ -280,17 +281,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderTopWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: AppColors.border.medium,
   },
   copyright: {
     fontSize: 14,
-    color: '#718096',
+    color: AppColors.text.secondary,
     marginBottom: 8,
     textAlign: 'center',
   },
   link: {
     fontSize: 14,
-    color: '#1a73e8',
+    color: AppColors.primary,
     fontWeight: '600',
     textAlign: 'center',
   },

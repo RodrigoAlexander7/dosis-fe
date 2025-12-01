@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { PatientVisit, AnemiaSeverity, FemaleAdditional, GestationTrimester } from '@/services/types/patient.types';
 import { Ionicons } from '@expo/vector-icons';
 import dayjs from 'dayjs';
+import { AppColors, getAnemiaSeverityColor } from '@/utils/styles/colors';
 
 interface VisitCardProps {
    visit: PatientVisit;
@@ -11,20 +12,7 @@ interface VisitCardProps {
    patientName?: string;
 }
 
-const getSeverityColor = (severity: AnemiaSeverity): string => {
-   switch (severity) {
-      case AnemiaSeverity.NONE:
-         return '#4CAF50';
-      case AnemiaSeverity.MILD:
-         return '#FF9800';
-      case AnemiaSeverity.MODERATE:
-         return '#FF5722';
-      case AnemiaSeverity.SEVERE:
-         return '#F44336';
-      default:
-         return '#9E9E9E';
-   }
-};
+// getSeverityColor replaced by getAnemiaSeverityColor from colors.ts
 
 const getSeverityLabel = (severity: AnemiaSeverity): string => {
    switch (severity) {
@@ -83,7 +71,7 @@ export const VisitCard: React.FC<VisitCardProps> = ({
       >
          <View style={styles.header}>
             <View style={styles.dateContainer}>
-               <Ionicons name="calendar" size={20} color="#2196F3" />
+               <Ionicons name="calendar" size={20} color={AppColors.primary} />
                <Text style={styles.date}>
                   {dayjs(visit.visitDate).format('DD/MM/YYYY')}
                </Text>
@@ -91,7 +79,7 @@ export const VisitCard: React.FC<VisitCardProps> = ({
             <View
                style={[
                   styles.severityBadge,
-                  { backgroundColor: getSeverityColor(visit.anemiaSeverity) }
+                  { backgroundColor: getAnemiaSeverityColor(visit.anemiaSeverity) }
                ]}
             >
                <Text style={styles.severityText}>
@@ -102,7 +90,7 @@ export const VisitCard: React.FC<VisitCardProps> = ({
 
          {showPatientInfo && patientName && (
             <View style={styles.patientInfo}>
-               <Ionicons name="person" size={16} color="#666" />
+               <Ionicons name="person" size={16} color={AppColors.text.secondary} />
                <Text style={styles.patientName}>{patientName}</Text>
             </View>
          )}
@@ -139,7 +127,7 @@ export const VisitCard: React.FC<VisitCardProps> = ({
 
          {visit.prescriptions && visit.prescriptions.length > 0 && (
             <View style={styles.prescriptionsInfo}>
-               <Ionicons name="medkit-outline" size={14} color="#2196F3" />
+               <Ionicons name="medkit-outline" size={14} color={AppColors.primary} />
                <Text style={styles.prescriptionsText}>
                   {visit.prescriptions.length} {visit.prescriptions.length === 1 ? 'prescripción' : 'prescripciones'}
                </Text>
@@ -148,7 +136,7 @@ export const VisitCard: React.FC<VisitCardProps> = ({
 
          {visit.createdBy && (
             <View style={styles.footer}>
-               <Ionicons name="person-circle-outline" size={14} color="#999" />
+               <Ionicons name="person-circle-outline" size={14} color={AppColors.text.tertiary} />
                <Text style={styles.createdBy}>
                   {visit.createdBy.name} ({visit.createdBy.role})
                </Text>
@@ -160,11 +148,11 @@ export const VisitCard: React.FC<VisitCardProps> = ({
 
 const styles = StyleSheet.create({
    card: {
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       borderRadius: 12,
       padding: 16,
       marginBottom: 12,
-      shadowColor: '#000',
+      shadowColor: AppColors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -184,7 +172,7 @@ const styles = StyleSheet.create({
    date: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    severityBadge: {
       paddingHorizontal: 12,
@@ -192,7 +180,7 @@ const styles = StyleSheet.create({
       borderRadius: 12,
    },
    severityText: {
-      color: '#fff',
+      color: AppColors.text.white,
       fontSize: 12,
       fontWeight: '600',
    },
@@ -203,12 +191,12 @@ const styles = StyleSheet.create({
       marginBottom: 12,
       paddingBottom: 12,
       borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
+      borderBottomColor: AppColors.border.medium,
    },
    patientName: {
       fontSize: 15,
       fontWeight: '500',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    measurements: {
       flexDirection: 'row',
@@ -221,13 +209,13 @@ const styles = StyleSheet.create({
    },
    measurementLabel: {
       fontSize: 12,
-      color: '#999',
+      color: AppColors.text.tertiary,
       marginBottom: 4,
    },
    measurementValue: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    additionalInfo: {
       flexDirection: 'row',
@@ -235,14 +223,14 @@ const styles = StyleSheet.create({
       marginBottom: 8,
    },
    badge: {
-      backgroundColor: '#E3F2FD',
+      backgroundColor: AppColors.background.info,
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 8,
    },
    badgeText: {
       fontSize: 12,
-      color: '#1976D2',
+      color: AppColors.info,
       fontWeight: '500',
    },
    prescriptionsInfo: {
@@ -252,13 +240,13 @@ const styles = StyleSheet.create({
       marginBottom: 8,
       paddingVertical: 6,
       paddingHorizontal: 10,
-      backgroundColor: '#E8F5E9',
+      backgroundColor: AppColors.background.success,
       borderRadius: 6,
       alignSelf: 'flex-start',
    },
    prescriptionsText: {
       fontSize: 12,
-      color: '#2E7D32',
+      color: AppColors.success,
       fontWeight: '500',
    },
    footer: {
@@ -268,10 +256,10 @@ const styles = StyleSheet.create({
       marginTop: 8,
       paddingTop: 8,
       borderTopWidth: 1,
-      borderTopColor: '#E0E0E0',
+      borderTopColor: AppColors.border.medium,
    },
    createdBy: {
       fontSize: 12,
-      color: '#999',
+      color: AppColors.text.tertiary,
    },
 });

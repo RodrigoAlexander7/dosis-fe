@@ -25,19 +25,12 @@ import { useHemoglobinCalculations } from '@/hooks/useHemoglobinCalculations';
 import { Picker } from 'react-native-ui-lib';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { getSupplementImage, defaultSupplementImage } from '@/utils/supplementImages';
+import { AppColors, getAnemiaSeverityColor } from '@/utils/styles/colors';
 
 dayjs.locale('es');
 
 // Helper functions
-const getSeverityColor = (severity: AnemiaSeverity): string => {
-   switch (severity) {
-      case AnemiaSeverity.NONE: return '#4CAF50';
-      case AnemiaSeverity.MILD: return '#FFC107';
-      case AnemiaSeverity.MODERATE: return '#FF9800';
-      case AnemiaSeverity.SEVERE: return '#F44336';
-      default: return '#666';
-   }
-};
+// Note: getSeverityColor is now imported from colors.ts as getAnemiaSeverityColor
 
 const getSeverityLabel = (severity: AnemiaSeverity): string => {
    switch (severity) {
@@ -296,7 +289,7 @@ export default function CreateVisitScreen() {
       <ScrollView style={styles.container}>
          <View style={styles.header}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-               <Ionicons name="arrow-back" size={24} color="#2196F3" />
+               <Ionicons name="arrow-back" size={24} color={AppColors.primary} />
             </TouchableOpacity>
             <Text style={styles.title}>Nueva Visita</Text>
          </View>
@@ -315,7 +308,7 @@ export default function CreateVisitScreen() {
                      keyboardType="numeric"
                      maxLength={8}
                      placeholder="12345678"
-                     placeholderTextColor="#A0AEC0"
+                     placeholderTextColor={AppColors.text.placeholder}
                      editable={!urlDni}
                   />
                </View>
@@ -331,13 +324,13 @@ export default function CreateVisitScreen() {
             </View>
 
             {isLoading && (
-               <ActivityIndicator size="large" color="#2196F3" style={styles.loader} />
+               <ActivityIndicator size="large" color={AppColors.primary} style={styles.loader} />
             )}
 
             {patient && (
                <View style={styles.patientInfo}>
                   <View style={styles.patientHeader}>
-                     <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+                     <Ionicons name="checkmark-circle" size={24} color={AppColors.success} />
                      <Text style={styles.patientFoundText}>Paciente encontrado</Text>
                   </View>
                   <View style={styles.patientDetails}>
@@ -363,7 +356,7 @@ export default function CreateVisitScreen() {
 
             {searchedDni && !patient && !isLoading && (
                <View style={styles.errorInfo}>
-                  <Ionicons name="alert-circle" size={24} color="#F44336" />
+                  <Ionicons name="alert-circle" size={24} color={AppColors.error} />
                   <Text style={styles.errorText}>
                      No se encontró ningún paciente con ese DNI
                   </Text>
@@ -384,7 +377,7 @@ export default function CreateVisitScreen() {
                         onChangeText={setWeight}
                         keyboardType="decimal-pad"
                         placeholder="65.5"
-                        placeholderTextColor="#A0AEC0"
+                        placeholderTextColor={AppColors.text.placeholder}
                      />
                   </View>
 
@@ -396,7 +389,7 @@ export default function CreateVisitScreen() {
                         onChangeText={setHbObserved}
                         keyboardType="decimal-pad"
                         placeholder="12.5"
-                        placeholderTextColor="#A0AEC0"
+                        placeholderTextColor={AppColors.text.placeholder}
                      />
                   </View>
 
@@ -436,7 +429,7 @@ export default function CreateVisitScreen() {
 
                   {patient.town && (
                      <View style={styles.adjustmentInfo}>
-                        <Ionicons name="information-circle" size={20} color="#2196F3" />
+                        <Ionicons name="information-circle" size={20} color={AppColors.primary} />
                         <Text style={styles.adjustmentText}>
                            Ajuste por altitud: +{patient.town.altitudeAdjustment} g/dL
                         </Text>
@@ -445,7 +438,7 @@ export default function CreateVisitScreen() {
 
                   {/* Anemia Diagnosis Display */}
                   {anemiaDiagnosis && (
-                     <View style={[styles.diagnosisCard, { backgroundColor: getSeverityColor(anemiaDiagnosis.anemiaSeverity) + '20', borderColor: getSeverityColor(anemiaDiagnosis.anemiaSeverity) }]}>
+                     <View style={[styles.diagnosisCard, { backgroundColor: getAnemiaSeverityColor(anemiaDiagnosis.anemiaSeverity) + '20', borderColor: getAnemiaSeverityColor(anemiaDiagnosis.anemiaSeverity) }]}>
                         <View style={styles.diagnosisHeader}>
                            <Ionicons name="fitness" size={24} color={getSeverityColor(anemiaDiagnosis.anemiaSeverity)} />
                            <Text style={styles.diagnosisTitle}>Diagnóstico</Text>
@@ -454,7 +447,7 @@ export default function CreateVisitScreen() {
                            <Text style={styles.diagnosisLabel}>Hemoglobina Ajustada:</Text>
                            <Text style={styles.diagnosisValue}>{anemiaDiagnosis.hbAdjusted.toFixed(2)} g/dL</Text>
                         </View>
-                        <View style={[styles.diagnosisBadge, { backgroundColor: getSeverityColor(anemiaDiagnosis.anemiaSeverity) }]}>
+                        <View style={[styles.diagnosisBadge, { backgroundColor: getAnemiaSeverityColor(anemiaDiagnosis.anemiaSeverity) }]}>
                            <Text style={styles.diagnosisBadgeText}>{getSeverityLabel(anemiaDiagnosis.anemiaSeverity)}</Text>
                         </View>
                      </View>
@@ -502,7 +495,7 @@ export default function CreateVisitScreen() {
                      {supplementDosePreview && (
                         <View style={styles.supplementResult}>
                            <View style={styles.supplementHeader}>
-                              <Ionicons name="medical" size={24} color="#4CAF50" />
+                              <Ionicons name="medical" size={24} color={AppColors.success} />
                               <Text style={styles.supplementTitle}>
                                  {patientAgeDays && patientAgeDays >= 5475 ? 'Tratamiento Adulto' : 'Tratamiento Pediátrico'}
                               </Text>
@@ -521,36 +514,36 @@ export default function CreateVisitScreen() {
                               </Text>
 
                               <View style={styles.doseInfo}>
-                                 <Ionicons name="water" size={16} color="#666" />
+                                 <Ionicons name="water" size={16} color={AppColors.text.secondary} />
                                  <Text style={styles.doseText}>
                                     Dosis calculada: {supplementDosePreview.prescribedDose.toFixed(2)} {supplementDosePreview.unitMeasure} por toma
                                  </Text>
                               </View>
 
                               <View style={styles.doseInfo}>
-                                 <Ionicons name="fitness" size={16} color="#666" />
+                                 <Ionicons name="fitness" size={16} color={AppColors.text.secondary} />
                                  <Text style={styles.doseText}>
                                     Guía: {supplementDosePreview.guideline.doseAmount} mg/kg/día
                                  </Text>
                               </View>
 
                               <View style={styles.doseInfo}>
-                                 <Ionicons name="time" size={16} color="#666" />
+                                 <Ionicons name="time" size={16} color={AppColors.text.secondary} />
                                  <Text style={styles.doseText}>
                                     Duración: {treatmentMonths} {treatmentMonths === 1 ? 'mes' : 'meses'} ({supplementDosePreview.treatmentDurationDays} días)
                                  </Text>
                               </View>
 
                               <View style={styles.doseInfo}>
-                                 <Ionicons name="cube" size={16} color="#666" />
+                                 <Ionicons name="cube" size={16} color={AppColors.text.secondary} />
                                  <Text style={styles.doseText}>
                                     Cantidad necesaria: {supplementDosePreview.numberOfBottles} {supplementDosePreview.supplement.presentation === 'TABLET' ? 'blisters' : 'frascos'}
                                  </Text>
                               </View>
 
                               <View style={styles.doseInfo}>
-                                 <Ionicons name="calendar-outline" size={16} color="#999" />
-                                 <Text style={[styles.doseText, { color: '#999', fontSize: 12 }]}>
+                                 <Ionicons name="calendar-outline" size={16} color={AppColors.text.tertiary} />
+                                 <Text style={[styles.doseText, { color: AppColors.text.tertiary, fontSize: 12 }]}>
                                     Rango de edad: {(supplementDosePreview.guideline.fromAgeDays / 365).toFixed(1)} - {(supplementDosePreview.guideline.toAgeDays / 365).toFixed(1)} años
                                  </Text>
                               </View>
@@ -573,7 +566,7 @@ export default function CreateVisitScreen() {
                                  value={prescriptionNotes}
                                  onChangeText={setPrescriptionNotes}
                                  placeholder="Ej: Tomar con jugo de naranja, evitar lácteos 2 horas antes..."
-                                 placeholderTextColor="#A0AEC0"
+                                 placeholderTextColor={AppColors.text.placeholder}
                                  multiline
                                  numberOfLines={3}
                               />
@@ -583,7 +576,7 @@ export default function CreateVisitScreen() {
 
                      {!selectedSupplementId && (
                         <View style={styles.infoBox}>
-                           <Ionicons name="information-circle-outline" size={20} color="#2196F3" />
+                           <Ionicons name="information-circle-outline" size={20} color={AppColors.primary} />
                            <Text style={styles.infoText}>
                               Seleccione un suplemento para calcular la dosis según peso y edad del paciente
                            </Text>
@@ -611,15 +604,15 @@ export default function CreateVisitScreen() {
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      backgroundColor: '#F4F7FC',
+      backgroundColor: AppColors.background.tertiary,
    },
    header: {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 16,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.white,
       borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
+      borderBottomColor: AppColors.border.light,
    },
    backButton: {
       marginRight: 16,
@@ -627,15 +620,15 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    card: {
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.white,
       margin: 16,
       marginBottom: 0,
       borderRadius: 12,
       padding: 16,
-      shadowColor: '#000',
+      shadowColor: AppColors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -644,7 +637,7 @@ const styles = StyleSheet.create({
    sectionTitle: {
       fontSize: 18,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 16,
    },
    searchRow: {
@@ -665,16 +658,16 @@ const styles = StyleSheet.create({
    label: {
       fontSize: 14,
       fontWeight: '500',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 8,
    },
    textInput: {
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: AppColors.border.light,
       borderRadius: 8,
       padding: 12,
       fontSize: 16,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.white,
    },
    textArea: {
       minHeight: 80,
@@ -689,7 +682,7 @@ const styles = StyleSheet.create({
    patientInfo: {
       marginTop: 16,
       padding: 16,
-      backgroundColor: '#E8F5E9',
+      backgroundColor: AppColors.successBackground,
       borderRadius: 8,
    },
    patientHeader: {
@@ -701,7 +694,7 @@ const styles = StyleSheet.create({
    patientFoundText: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#2E7D32',
+      color: AppColors.successText,
    },
    patientDetails: {
       gap: 6,
@@ -709,12 +702,12 @@ const styles = StyleSheet.create({
    patientName: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 8,
    },
    patientDetail: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    errorInfo: {
       flexDirection: 'row',
@@ -722,26 +715,26 @@ const styles = StyleSheet.create({
       gap: 12,
       marginTop: 16,
       padding: 16,
-      backgroundColor: '#FFEBEE',
+      backgroundColor: AppColors.errorLight,
       borderRadius: 8,
    },
    errorText: {
       flex: 1,
       fontSize: 14,
-      color: '#C62828',
+      color: AppColors.errorDark,
    },
    adjustmentInfo: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 8,
       padding: 12,
-      backgroundColor: '#E3F2FD',
+      backgroundColor: AppColors.primaryLight,
       borderRadius: 8,
       marginTop: 8,
    },
    adjustmentText: {
       fontSize: 14,
-      color: '#1976D2',
+      color: AppColors.primaryDark,
       fontWeight: '500',
    },
    buttonContainer: {
@@ -757,12 +750,12 @@ const styles = StyleSheet.create({
    },
    picker: {
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: AppColors.border.light,
       borderRadius: 8,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.white,
    },
    supplementResult: {
-      backgroundColor: '#F1F8F4',
+      backgroundColor: AppColors.successLight,
       borderRadius: 8,
       padding: 16,
       marginTop: 12,
@@ -776,14 +769,14 @@ const styles = StyleSheet.create({
    supplementTitle: {
       fontSize: 18,
       fontWeight: '600',
-      color: '#2E7D32',
+      color: AppColors.successText,
    },
    supplementImage: {
       width: 120,
       height: 120,
       borderRadius: 8,
       marginBottom: 16,
-      backgroundColor: '#E0E0E0',
+      backgroundColor: AppColors.border.light,
       alignSelf: 'center',
    },
    supplementDetails: {
@@ -792,7 +785,7 @@ const styles = StyleSheet.create({
    supplementProduct: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 8,
    },
    doseInfo: {
@@ -802,40 +795,40 @@ const styles = StyleSheet.create({
    },
    doseText: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
       flex: 1,
    },
    notesBox: {
       marginTop: 12,
       padding: 12,
-      backgroundColor: '#FFF9E6',
+      backgroundColor: AppColors.warningBackground,
       borderRadius: 6,
       borderLeftWidth: 3,
-      borderLeftColor: '#FFC107',
+      borderLeftColor: AppColors.warningBorder,
    },
    notesLabel: {
       fontSize: 12,
       fontWeight: '600',
-      color: '#F57C00',
+      color: AppColors.warningDark,
       marginBottom: 4,
    },
    notesText: {
       fontSize: 12,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    infoBox: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 12,
       padding: 12,
-      backgroundColor: '#E3F2FD',
+      backgroundColor: AppColors.primaryLight,
       borderRadius: 8,
       marginTop: 12,
    },
    infoText: {
       flex: 1,
       fontSize: 13,
-      color: '#1976D2',
+      color: AppColors.primaryDark,
    },
    diagnosisCard: {
       marginTop: 16,
@@ -852,20 +845,20 @@ const styles = StyleSheet.create({
    diagnosisTitle: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    diagnosisContent: {
       marginBottom: 12,
    },
    diagnosisLabel: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
       marginBottom: 4,
    },
    diagnosisValue: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    diagnosisBadge: {
       paddingHorizontal: 16,
@@ -874,7 +867,7 @@ const styles = StyleSheet.create({
       alignSelf: 'flex-start',
    },
    diagnosisBadgeText: {
-      color: '#fff',
+      color: AppColors.white,
       fontSize: 14,
       fontWeight: '600',
    },

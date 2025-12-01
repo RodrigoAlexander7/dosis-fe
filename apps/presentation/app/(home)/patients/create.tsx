@@ -26,6 +26,10 @@ import {
 import { useHemoglobinCalculations } from '@/hooks/useHemoglobinCalculations';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { useLocationPickerData } from '@/modules/location/hooks/useLocationPickerData';
+import { AppColors } from '@/utils/styles/colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+
 
 dayjs.locale('es');
 
@@ -175,10 +179,11 @@ export default function CreatePatientScreen() {
    };
 
    return (
+      <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
          <View style={styles.header}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-               <Ionicons name="arrow-back" size={24} color="#2196F3" />
+               <Ionicons name="arrow-back" size={24} color={AppColors.primary} />
             </TouchableOpacity>
             <Text style={styles.title}>Nuevo Paciente</Text>
          </View>
@@ -195,7 +200,7 @@ export default function CreatePatientScreen() {
                   keyboardType="numeric"
                   maxLength={8}
                   placeholder="12345678"
-                  placeholderTextColor="#A0AEC0"
+                  placeholderTextColor={AppColors.text.placeholder}
                />
             </View>
 
@@ -210,7 +215,7 @@ export default function CreatePatientScreen() {
                      editable={false}
                      value={birthDate.format('DD [de] MMMM [de] YYYY')}
                      pointerEvents="none"
-                     placeholderTextColor="#2D3748"
+                     placeholderTextColor={AppColors.text.primary}
                   />
                </TouchableOpacity>
                {showDatePicker && (
@@ -277,7 +282,7 @@ export default function CreatePatientScreen() {
                   onChangeText={setWeight}
                   keyboardType="decimal-pad"
                   placeholder="65.5"
-                  placeholderTextColor="#A0AEC0"
+                  placeholderTextColor={AppColors.text.placeholder}
                />
             </View>
 
@@ -289,7 +294,7 @@ export default function CreatePatientScreen() {
                   onChangeText={setHbObserved}
                   keyboardType="decimal-pad"
                   placeholder="12.5"
-                  placeholderTextColor="#A0AEC0"
+                  placeholderTextColor={AppColors.text.placeholder}
                />
             </View>
          </View>
@@ -350,7 +355,7 @@ export default function CreatePatientScreen() {
 
             {location.adjustHB > 0 && (
                <View style={styles.adjustmentInfo}>
-                  <Ionicons name="information-circle" size={20} color="#2196F3" />
+                  <Ionicons name="information-circle" size={20} color={AppColors.primary} />
                   <Text style={styles.adjustmentText}>
                      Ajuste por altitud: {location.adjustHB.toFixed(2)} g/dL
                   </Text>
@@ -369,21 +374,22 @@ export default function CreatePatientScreen() {
             />
          </View>
       </ScrollView >
+      </SafeAreaView>
    );
 }
 
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      backgroundColor: '#F4F7FC',
+      backgroundColor: AppColors.background.secondary,
    },
    header: {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 16,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
+      borderBottomColor: AppColors.border.medium,
    },
    backButton: {
       marginRight: 16,
@@ -391,15 +397,15 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    card: {
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       margin: 16,
       marginBottom: 0,
       borderRadius: 12,
       padding: 16,
-      shadowColor: '#000',
+      shadowColor: AppColors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -408,7 +414,7 @@ const styles = StyleSheet.create({
    sectionTitle: {
       fontSize: 18,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 16,
    },
    inputGroup: {
@@ -417,16 +423,16 @@ const styles = StyleSheet.create({
    label: {
       fontSize: 14,
       fontWeight: '500',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 8,
    },
    textInput: {
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: AppColors.border.medium,
       borderRadius: 8,
       padding: 12,
       fontSize: 16,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
    },
    datePickerButton: {
       width: '100%',
@@ -443,13 +449,13 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       gap: 8,
       padding: 12,
-      backgroundColor: '#E3F2FD',
+      backgroundColor: AppColors.background.info,
       borderRadius: 8,
       marginTop: 8,
    },
    adjustmentText: {
       fontSize: 14,
-      color: '#1976D2',
+      color: AppColors.info,
       fontWeight: '500',
    },
    buttonContainer: {

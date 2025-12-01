@@ -1,24 +1,25 @@
 import { Colors } from 'react-native-ui-lib';
+import { ColorPalette } from './colors';
 
 Colors.loadSchemes({
   light: {
-    screenBG: '#F9FAFB',
-    textColor: '#1F2937',
-    primary: '#2563EB',
-    secondary: '#3B82F6',
-    accent: '#10B981',
-    error: '#EF4444',
-    border: '#D1D5DB',
-    inputBG: '#FFFFFF',
+    screenBG: ColorPalette.slate[50],
+    textColor: ColorPalette.gray[900],
+    primary: ColorPalette.indigo[600],
+    secondary: ColorPalette.indigo[700],
+    accent: ColorPalette.emerald[500],
+    error: ColorPalette.red[500],
+    border: ColorPalette.slate[300],
+    inputBG: ColorPalette.white,
   },
   dark: {
-    screenBG: '#F9FAFB',
-    textColor: '#1F2937',
-    primary: '#2563EB',
-    secondary: '#3B82F6',
-    accent: '#10B981',
-    error: '#EF4444',
-    border: '#D1D5DB',
-    inputBG: '#FFFFFF',
+    screenBG: ColorPalette.slate[50],
+    textColor: ColorPalette.gray[900],
+    primary: ColorPalette.indigo[600],
+    secondary: ColorPalette.indigo[700],
+    accent: ColorPalette.emerald[500],
+    error: ColorPalette.red[500],
+    border: ColorPalette.slate[300],
+    inputBG: ColorPalette.white,
   },
 });

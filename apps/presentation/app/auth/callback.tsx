@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuthStore, isAdmin } from '@/stores/authStore';
+import { AppColors } from '@/utils/styles/colors';
 
 export default function AuthCallbackScreen() {
    const { token, user } = useLocalSearchParams<{ token?: string; user?: string }>();
@@ -35,7 +36,7 @@ export default function AuthCallbackScreen() {
 
    return (
       <View style={styles.container}>
-         <ActivityIndicator size="large" color="#2196F3" />
+         <ActivityIndicator size="large" color={AppColors.primary} />
          <Text style={styles.text}>Completando autenticación...</Text>
       </View>
    );
@@ -46,11 +47,11 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
    },
    text: {
       marginTop: 16,
       fontSize: 16,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
 });

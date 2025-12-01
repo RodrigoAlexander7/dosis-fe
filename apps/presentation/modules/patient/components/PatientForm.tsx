@@ -1,6 +1,7 @@
 import { usePatientForm } from '@/modules/patient/hooks/usePatientForm';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import dayjs from 'dayjs';
+import { AppColors } from '@/utils/styles/colors';
 import 'dayjs/locale/es';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -43,7 +44,7 @@ export function PatientForm() {
    }
 
    return (
-      <View style={{ flex: 1, backgroundColor: '#F4F7FC' }}>
+      <View style={{ flex: 1, backgroundColor: AppColors.background.secondary }}>
          <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>
                Registro de Paciente
@@ -61,7 +62,7 @@ export function PatientForm() {
                      value={auxWeight}
                      keyboardType="decimal-pad"
                      placeholder="Ej: 65.5"
-                     placeholderTextColor="#A0AEC0"
+                     placeholderTextColor={AppColors.text.placeholder}
                      underlineColorAndroid="transparent"
                   />
                </View>
@@ -78,7 +79,7 @@ export function PatientForm() {
                         value={birthDate ? dayjs(birthDate).format('DD [de] MMMM [de] YYYY') : 'Seleccionar fecha'}
                         pointerEvents="none"
                         placeholder="Seleccionar fecha"
-                        placeholderTextColor={birthDate ? '#2D3748' : '#A0AEC0'}
+                        placeholderTextColor={birthDate ? AppColors.text.primary : AppColors.text.placeholder}
                         underlineColorAndroid="transparent"
                      />
                   </TouchableOpacity>
@@ -90,7 +91,7 @@ export function PatientForm() {
                         value={birthDate?.toDate?.() ?? new Date()}
                         maximumDate={new Date()}
                         onChange={handleDateChange}
-                        textColor="#1a73e8"
+                        textColor={AppColors.primary}
                      />
                   }
                </View>
@@ -217,22 +218,22 @@ const styles = StyleSheet.create({
    container: {
       flexGrow: 1,
       padding: 20,
-      backgroundColor: '#F4F7FC',
+      backgroundColor: AppColors.background.secondary,
       justifyContent: 'center'
    },
    title: {
       fontSize: 24,
       fontWeight: '700',
-      color: '#1a73e8',
+      color: AppColors.primary,
       textAlign: 'center',
       marginBottom: 24,
       marginTop: 10,
    },
    formContainer: {
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background.primary,
       borderRadius: 16,
       padding: 20,
-      shadowColor: "#000",
+      shadowColor: AppColors.shadow,
       shadowOffset: {
          width: 0,
          height: 2,
@@ -247,16 +248,16 @@ const styles = StyleSheet.create({
    label: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#2D3748',
+      color: AppColors.text.primary,
       marginBottom: 8,
    },
    textInput: {
       borderWidth: 1,
-      borderColor: '#E2E8F0',
+      borderColor: AppColors.border.medium,
       borderRadius: 12,
       padding: 14,
       fontSize: 16,
-      backgroundColor: '#F7FAFC',
+      backgroundColor: AppColors.background.tertiary,
    },
    datePickerButton: {
       // Estilo ya aplicado a través del textInput
@@ -265,11 +266,11 @@ const styles = StyleSheet.create({
       marginVertical: 6,
       padding: 8,
       borderRadius: 8,
-      backgroundColor: '#F7FAFC',
+      backgroundColor: AppColors.background.tertiary,
    },
    radioLabel: {
       fontSize: 16,
-      color: '#2D3748',
+      color: AppColors.text.primary,
    },
    hidden: {
       display: 'none',
@@ -278,7 +279,7 @@ const styles = StyleSheet.create({
       height: 50,
       borderRadius: 12,
       marginTop: 10,
-      shadowColor: "#1a73e8",
+      shadowColor: AppColors.primary,
       shadowOffset: {
          width: 0,
          height: 2,
@@ -288,7 +289,7 @@ const styles = StyleSheet.create({
       elevation: 3,
    },
    disabledButton: {
-      backgroundColor: '#CBD5E0',
+      backgroundColor: AppColors.disabled,
    },
    submitButtonLabel: {
       fontSize: 16,

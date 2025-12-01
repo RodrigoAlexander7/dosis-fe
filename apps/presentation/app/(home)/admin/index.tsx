@@ -18,6 +18,7 @@ import { getErrorMessage } from '@/utils/errorHandler';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import { useRouter } from 'expo-router';
+import { AppColors, getRoleColor } from '@/utils/styles/colors';
 
 dayjs.locale('es');
 
@@ -43,7 +44,7 @@ export default function AdminPanelScreen() {
    if (!canManageUsers(user)) {
       return (
          <View style={styles.centered}>
-            <Ionicons name="lock-closed" size={64} color="#ccc" />
+            <Ionicons name="lock-closed" size={64} color={AppColors.disabled} />
             <Text style={styles.errorText}>No tienes permisos para acceder a esta sección</Text>
             <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
                <Text style={styles.backButtonText}>Volver</Text>
@@ -124,7 +125,7 @@ export default function AdminPanelScreen() {
                      <Text style={styles.userName}>{item.name}</Text>
                      {item.role === 'ADMIN' && (
                         <View style={styles.adminBadge}>
-                           <Ionicons name="shield-checkmark" size={16} color="#FF9800" />
+                           <Ionicons name="shield-checkmark" size={16} color={AppColors.warning} />
                            <Text style={styles.adminBadgeText}>Admin</Text>
                         </View>
                      )}
@@ -170,7 +171,7 @@ export default function AdminPanelScreen() {
 
             {isCurrentUser && (
                <View style={styles.currentUserInfo}>
-                  <Ionicons name="information-circle" size={16} color="#2196F3" />
+                  <Ionicons name="information-circle" size={16} color={AppColors.primary} />
                   <Text style={styles.currentUserText}>Este es tu usuario actual</Text>
                </View>
             )}
@@ -183,7 +184,7 @@ export default function AdminPanelScreen() {
                         <Ionicons
                            name={account.provider === 'google' ? 'logo-google' : 'person'}
                            size={14}
-                           color="#666"
+                           color={AppColors.text.secondary}
                         />
                         <Text style={styles.providerText}>{account.provider}</Text>
                      </View>
@@ -197,7 +198,7 @@ export default function AdminPanelScreen() {
    if (isLoading) {
       return (
          <View style={styles.centered}>
-            <ActivityIndicator size="large" color="#2196F3" />
+            <ActivityIndicator size="large" color={AppColors.primary} />
             <Text style={styles.loadingText}>Cargando usuarios...</Text>
          </View>
       );
@@ -243,7 +244,7 @@ export default function AdminPanelScreen() {
          <View style={styles.listHeader}>
             <Text style={styles.listTitle}>Gestión de Usuarios</Text>
             <TouchableOpacity onPress={() => refetch()} style={styles.refreshButton}>
-               <Ionicons name="refresh" size={20} color="#2196F3" />
+               <Ionicons name="refresh" size={20} color={AppColors.primary} />
             </TouchableOpacity>
          </View>
 
@@ -254,7 +255,7 @@ export default function AdminPanelScreen() {
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={
                <View style={styles.emptyState}>
-                  <Ionicons name="people-outline" size={64} color="#ccc" />
+                  <Ionicons name="people-outline" size={64} color={AppColors.disabled} />
                   <Text style={styles.emptyText}>No hay usuarios registrados</Text>
                </View>
             }
@@ -266,7 +267,7 @@ export default function AdminPanelScreen() {
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      backgroundColor: '#F4F7FC',
+      backgroundColor: AppColors.background.secondary,
    },
    centered: {
       flex: 1,
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
    },
    errorText: {
       fontSize: 16,
-      color: '#666',
+      color: AppColors.text.secondary,
       marginTop: 16,
       textAlign: 'center',
    },
@@ -284,29 +285,29 @@ const styles = StyleSheet.create({
       marginTop: 24,
       paddingHorizontal: 24,
       paddingVertical: 12,
-      backgroundColor: '#2196F3',
+      backgroundColor: AppColors.primary,
       borderRadius: 8,
    },
    backButtonText: {
-      color: '#fff',
+      color: AppColors.text.white,
       fontSize: 16,
       fontWeight: '600',
    },
    loadingText: {
       marginTop: 16,
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    statsContainer: {
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       padding: 16,
       borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
+      borderBottomColor: AppColors.border.medium,
    },
    statsTitle: {
       fontSize: 18,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 12,
    },
    statsGrid: {
@@ -317,7 +318,7 @@ const styles = StyleSheet.create({
    statCard: {
       flex: 1,
       minWidth: '22%',
-      backgroundColor: '#F4F7FC',
+      backgroundColor: AppColors.background.secondary,
       padding: 12,
       borderRadius: 8,
       alignItems: 'center',
@@ -325,11 +326,11 @@ const styles = StyleSheet.create({
    statValue: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: '#2196F3',
+      color: AppColors.primary,
    },
    statLabel: {
       fontSize: 12,
-      color: '#666',
+      color: AppColors.text.secondary,
       marginTop: 4,
    },
    listHeader: {
@@ -337,14 +338,14 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: 16,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
+      borderBottomColor: AppColors.border.medium,
    },
    listTitle: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    refreshButton: {
       padding: 8,
@@ -353,11 +354,11 @@ const styles = StyleSheet.create({
       padding: 16,
    },
    userCard: {
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       borderRadius: 12,
       padding: 16,
       marginBottom: 12,
-      shadowColor: '#000',
+      shadowColor: AppColors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -380,33 +381,33 @@ const styles = StyleSheet.create({
    userName: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    adminBadge: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 4,
-      backgroundColor: '#FFF3E0',
+      backgroundColor: AppColors.background.warning,
       paddingHorizontal: 8,
       paddingVertical: 2,
       borderRadius: 12,
    },
    adminBadgeText: {
       fontSize: 12,
-      color: '#F57C00',
+      color: AppColors.warning,
       fontWeight: '600',
    },
    userEmail: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
       marginBottom: 4,
    },
    userDate: {
       fontSize: 12,
-      color: '#999',
+      color: AppColors.text.tertiary,
    },
    statusBadge: {
-      backgroundColor: '#4CAF50',
+      backgroundColor: AppColors.success,
       paddingHorizontal: 12,
       paddingVertical: 6,
       borderRadius: 12,
@@ -414,10 +415,10 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
    },
    inactiveBadge: {
-      backgroundColor: '#F44336',
+      backgroundColor: AppColors.error,
    },
    statusText: {
-      color: '#fff',
+      color: AppColors.text.white,
       fontSize: 12,
       fontWeight: '600',
    },
@@ -426,7 +427,7 @@ const styles = StyleSheet.create({
       gap: 16,
       paddingTop: 12,
       borderTopWidth: 1,
-      borderTopColor: '#E0E0E0',
+      borderTopColor: AppColors.border.medium,
       marginTop: 12,
    },
    controlGroup: {
@@ -438,7 +439,7 @@ const styles = StyleSheet.create({
    controlLabel: {
       fontSize: 14,
       fontWeight: '500',
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    rolePicker: {
       flex: 1,
@@ -449,22 +450,22 @@ const styles = StyleSheet.create({
       gap: 6,
       marginTop: 12,
       padding: 8,
-      backgroundColor: '#E3F2FD',
+      backgroundColor: AppColors.background.info,
       borderRadius: 6,
    },
    currentUserText: {
       fontSize: 12,
-      color: '#1976D2',
+      color: AppColors.info,
    },
    providersInfo: {
       marginTop: 12,
       paddingTop: 12,
       borderTopWidth: 1,
-      borderTopColor: '#E0E0E0',
+      borderTopColor: AppColors.border.medium,
    },
    providersLabel: {
       fontSize: 12,
-      color: '#999',
+      color: AppColors.text.tertiary,
       marginBottom: 6,
    },
    providerBadge: {
@@ -475,7 +476,7 @@ const styles = StyleSheet.create({
    },
    providerText: {
       fontSize: 12,
-      color: '#666',
+      color: AppColors.text.secondary,
       textTransform: 'capitalize',
    },
    emptyState: {
@@ -485,7 +486,7 @@ const styles = StyleSheet.create({
    },
    emptyText: {
       fontSize: 16,
-      color: '#999',
+      color: AppColors.text.tertiary,
       marginTop: 16,
    },
 });
