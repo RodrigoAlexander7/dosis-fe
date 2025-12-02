@@ -150,12 +150,12 @@ export const ColorPalette = {
  */
 export const AppColors = {
   // Primary brand colors
-  primary: ColorPalette.blue[500],
-  primaryLight: ColorPalette.blue[50],
-  primaryDark: ColorPalette.blue[700],
-  secondary: ColorPalette.indigo[700],
+  primary: ColorPalette.red[500],
+  primaryLight: ColorPalette.red[50],
+  primaryDark: ColorPalette.red[700],
+  secondary: ColorPalette.red[600],
   accent: ColorPalette.emerald[500],
-  info: ColorPalette.blue[500],
+  info: ColorPalette.red[500],
 
   // Status colors
   success: ColorPalette.green[500],
@@ -194,6 +194,7 @@ export const AppColors = {
     disabled: ColorPalette.gray[500],
     placeholder: ColorPalette.slate[500],
     inverse: ColorPalette.white,
+    white: ColorPalette.white, // Alias for inverse
   },
 
   // Background colors
@@ -205,9 +206,10 @@ export const AppColors = {
     input: ColorPalette.white,
     inputAlt: ColorPalette.slate[100],
     disabled: ColorPalette.gray[300],
-    blue: ColorPalette.blue[50],
-    info: ColorPalette.blueGray[100],
+    blue: ColorPalette.red[50], // cambiado a rojo claro para elementos "brand"
+    info: ColorPalette.red[100], // info ahora usa tono rojo
     success: ColorPalette.green[500],
+    warning: ColorPalette.orange[50],
   },
 
   // Border colors
@@ -222,7 +224,7 @@ export const AppColors = {
 
   // Icon colors
   icon: {
-    primary: ColorPalette.blue[500],
+    primary: ColorPalette.red[500],
     secondary: ColorPalette.gray[700],
     success: ColorPalette.green[500],
     warning: ColorPalette.orange[500],
@@ -231,7 +233,7 @@ export const AppColors = {
 
   // Role colors
   role: {
-    doctor: ColorPalette.blue[500],
+    doctor: ColorPalette.red[500],
     other: ColorPalette.green[500],
     none: ColorPalette.gray[500],
   },

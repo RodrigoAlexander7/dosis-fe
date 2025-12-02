@@ -1,9 +1,9 @@
 /**
  * Centralized Styles Export
- * 
+ *
  * Import all styling utilities from a single location
  */
 
-export * from './colors';
-export { default as './themes';
-export { default as './styles';
+export * from "./colors";
+import "./themes";
+import "./styles";

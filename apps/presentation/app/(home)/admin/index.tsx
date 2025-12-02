@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Ionicons } from '@expo/vector-icons';
-import { Picker, Colors, Switch } from 'react-native-ui-lib';
+import { Picker, Colors, Switch, PickerModes } from 'react-native-ui-lib';
 import { adminApi } from '@/services/api/admin.api';
 import { AdminUser } from '@/services/types/admin.types';
 import { useAuthStore, canManageUsers } from '@/stores/authStore';
@@ -152,7 +152,7 @@ export default function AdminPanelScreen() {
                         onChange={(value) => handleRoleChange(item.id, item.role, value)}
                         style={styles.rolePicker}
                         placeholder="Seleccionar rol"
-                        mode="SINGLE"
+                        mode={PickerModes.SINGLE}
                         disabled={updateRoleMutation.isPending}
                      />
                   </View>

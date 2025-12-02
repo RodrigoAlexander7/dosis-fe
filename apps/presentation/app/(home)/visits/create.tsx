@@ -26,6 +26,9 @@ import { Picker } from 'react-native-ui-lib';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { getSupplementImage, defaultSupplementImage } from '@/utils/supplementImages';
 import { AppColors, getAnemiaSeverityColor } from '@/utils/styles/colors';
+import { AnemiaDiagnosisCard } from '@/modules/visits/components/AnemiaDiagnosisCard';
+import { SupplementSelector } from '@/modules/visits/components/SupplementSelector';
+import { useSupplementCalculation } from '@/modules/visits/hooks/useSupplementCalculation';
 
 dayjs.locale('es');
 
@@ -263,6 +266,18 @@ export default function CreateVisitScreen() {
       };
    }, [selectedSupplement, patient, weight, patientAgeDays, hbObserved, femaleAditional, gestationTime, treatmentMonths]);
 
+   // Alternative: Use custom hook (commented for now, can replace above code)
+   // const supplementDosePreview = useSupplementCalculation({
+   //    selectedSupplement,
+   //    patient,
+   //    weight: weight ? Number(weight) : null,
+   //    patientAgeDays,
+   //    hbObserved: hbObserved ? Number(hbObserved) : null,
+   //    femaleAditional,
+   //    gestationTime,
+   //    treatmentMonths,
+   // });
+
    // Calculate anemia diagnosis for display
    const anemiaDiagnosis = React.useMemo(() => {
       if (!patient || !weight || !hbObserved) return null;
@@ -436,153 +451,29 @@ export default function CreateVisitScreen() {
                      </View>
                   )}
 
-                  {/* Anemia Diagnosis Display */}
+                  {/* Anemia Diagnosis Display - Using Modular Component */}
                   {anemiaDiagnosis && (
-                     <View style={[styles.diagnosisCard, { backgroundColor: getAnemiaSeverityColor(anemiaDiagnosis.anemiaSeverity) + '20', borderColor: getAnemiaSeverityColor(anemiaDiagnosis.anemiaSeverity) }]}>
-                        <View style={styles.diagnosisHeader}>
-                           <Ionicons name="fitness" size={24} color={getSeverityColor(anemiaDiagnosis.anemiaSeverity)} />
-                           <Text style={styles.diagnosisTitle}>Diagnóstico</Text>
-                        </View>
-                        <View style={styles.diagnosisContent}>
-                           <Text style={styles.diagnosisLabel}>Hemoglobina Ajustada:</Text>
-                           <Text style={styles.diagnosisValue}>{anemiaDiagnosis.hbAdjusted.toFixed(2)} g/dL</Text>
-                        </View>
-                        <View style={[styles.diagnosisBadge, { backgroundColor: getAnemiaSeverityColor(anemiaDiagnosis.anemiaSeverity) }]}>
-                           <Text style={styles.diagnosisBadgeText}>{getSeverityLabel(anemiaDiagnosis.anemiaSeverity)}</Text>
-                        </View>
-                     </View>
+                     <AnemiaDiagnosisCard
+                        hbAdjusted={anemiaDiagnosis.hbAdjusted}
+                        anemiaSeverity={anemiaDiagnosis.anemiaSeverity}
+                        severityLabel={getSeverityLabel(anemiaDiagnosis.anemiaSeverity)}
+                     />
                   )}
                </View>
 
                {/* Supplement Selection */}
                {weight && hbObserved && (
-                  <View style={styles.card}>
-                     <Text style={styles.sectionTitle}>Suplementación</Text>
-
-                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Tipo de Suplemento</Text>
-                        <Picker
-                           value={selectedSupplementId}
-                           items={supplements.map(s => ({ label: s.name, value: s.idSupplement }))}
-                           onChange={(value) => setSelectedSupplementId(value as string)}
-                           style={styles.picker}
-                           placeholder="Seleccionar suplemento..."
-                           showSearch
-                           searchPlaceholder="Buscar..."
-                        />
-                     </View>
-
-                     {selectedSupplementId && (
-                        <View style={styles.inputGroup}>
-                           <Text style={styles.label}>Duración del Tratamiento (meses)</Text>
-                           <Picker
-                              value={treatmentMonths}
-                              items={[
-                                 { label: '1 mes', value: 1 },
-                                 { label: '2 meses', value: 2 },
-                                 { label: '3 meses', value: 3 },
-                                 { label: '4 meses', value: 4 },
-                                 { label: '5 meses', value: 5 },
-                                 { label: '6 meses', value: 6 },
-                              ]}
-                              onChange={(value) => setTreatmentMonths(value as number)}
-                              style={styles.picker}
-                              placeholder="Seleccionar duración..."
-                           />
-                        </View>
-                     )}
-
-                     {supplementDosePreview && (
-                        <View style={styles.supplementResult}>
-                           <View style={styles.supplementHeader}>
-                              <Ionicons name="medical" size={24} color={AppColors.success} />
-                              <Text style={styles.supplementTitle}>
-                                 {patientAgeDays && patientAgeDays >= 5475 ? 'Tratamiento Adulto' : 'Tratamiento Pediátrico'}
-                              </Text>
-                           </View>
-
-                           {/* Supplement Image */}
-                           <Image
-                              source={getSupplementImage(supplementDosePreview.supplement.name) || defaultSupplementImage}
-                              style={styles.supplementImage}
-                              resizeMode="contain"
-                           />
-
-                           <View style={styles.supplementDetails}>
-                              <Text style={styles.supplementProduct}>
-                                 {supplementDosePreview.supplement.name}
-                              </Text>
-
-                              <View style={styles.doseInfo}>
-                                 <Ionicons name="water" size={16} color={AppColors.text.secondary} />
-                                 <Text style={styles.doseText}>
-                                    Dosis calculada: {supplementDosePreview.prescribedDose.toFixed(2)} {supplementDosePreview.unitMeasure} por toma
-                                 </Text>
-                              </View>
-
-                              <View style={styles.doseInfo}>
-                                 <Ionicons name="fitness" size={16} color={AppColors.text.secondary} />
-                                 <Text style={styles.doseText}>
-                                    Guía: {supplementDosePreview.guideline.doseAmount} mg/kg/día
-                                 </Text>
-                              </View>
-
-                              <View style={styles.doseInfo}>
-                                 <Ionicons name="time" size={16} color={AppColors.text.secondary} />
-                                 <Text style={styles.doseText}>
-                                    Duración: {treatmentMonths} {treatmentMonths === 1 ? 'mes' : 'meses'} ({supplementDosePreview.treatmentDurationDays} días)
-                                 </Text>
-                              </View>
-
-                              <View style={styles.doseInfo}>
-                                 <Ionicons name="cube" size={16} color={AppColors.text.secondary} />
-                                 <Text style={styles.doseText}>
-                                    Cantidad necesaria: {supplementDosePreview.numberOfBottles} {supplementDosePreview.supplement.presentation === 'TABLET' ? 'blisters' : 'frascos'}
-                                 </Text>
-                              </View>
-
-                              <View style={styles.doseInfo}>
-                                 <Ionicons name="calendar-outline" size={16} color={AppColors.text.tertiary} />
-                                 <Text style={[styles.doseText, { color: AppColors.text.tertiary, fontSize: 12 }]}>
-                                    Rango de edad: {(supplementDosePreview.guideline.fromAgeDays / 365).toFixed(1)} - {(supplementDosePreview.guideline.toAgeDays / 365).toFixed(1)} años
-                                 </Text>
-                              </View>
-
-                              {supplementDosePreview.supplement.notes && (
-                                 <View style={styles.notesBox}>
-                                    <Text style={styles.notesLabel}>Notas:</Text>
-                                    <Text style={styles.notesText}>
-                                       {supplementDosePreview.supplement.notes}
-                                    </Text>
-                                 </View>
-                              )}
-                           </View>
-
-                           {/* Campo de notas adicionales */}
-                           <View style={styles.inputGroup}>
-                              <Text style={styles.label}>Notas de la Prescripción (Opcional)</Text>
-                              <TextField
-                                 style={[styles.textInput, styles.textArea]}
-                                 value={prescriptionNotes}
-                                 onChangeText={setPrescriptionNotes}
-                                 placeholder="Ej: Tomar con jugo de naranja, evitar lácteos 2 horas antes..."
-                                 placeholderTextColor={AppColors.text.placeholder}
-                                 multiline
-                                 numberOfLines={3}
-                              />
-                           </View>
-                        </View>
-                     )}
-
-                     {!selectedSupplementId && (
-                        <View style={styles.infoBox}>
-                           <Ionicons name="information-circle-outline" size={20} color={AppColors.primary} />
-                           <Text style={styles.infoText}>
-                              Seleccione un suplemento para calcular la dosis según peso y edad del paciente
-                           </Text>
-                        </View>
-                     )}
-                  </View>
+                  <SupplementSelector
+                     supplements={supplements}
+                     selectedSupplementId={selectedSupplementId}
+                     onSupplementChange={setSelectedSupplementId}
+                     treatmentMonths={treatmentMonths}
+                     onTreatmentMonthsChange={setTreatmentMonths}
+                     prescriptionNotes={prescriptionNotes}
+                     onPrescriptionNotesChange={setPrescriptionNotes}
+                     supplementPreview={supplementDosePreview}
+                     patientAgeDays={patientAgeDays}
+                  />
                )}
 
                <View style={styles.buttonContainer}>
