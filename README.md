@@ -50,12 +50,6 @@ Descarga la app directamente desde **Expo EAS** usando el siguiente enlace:
 📲 [Descargar App DosisFe en Expo](https://expo.dev/accounts/rodrygoleu/projects/IronSuplementCalculator/builds/c1840303-c7f8-493e-bc83-af0b53d09e1b)
 Una vez dentro podras ver el servidor (el que iniciamos localmente con `npm run dev`) selecionalo y tendras la aplicacion corriendo en tu telefono!
 
-## 🔭 Futuras funcionalidades
-
-* Sistema de autenticación para médicos y pacientes.
-* Backend para almacenamiento del historial médico.
-* Recomendación de tratamiento (tipo y dosis de hierro).
-* Estadísticas poblacionales y seguimiento longitudinal.
 
 ## 🧠 Visión a largo plazo
 
