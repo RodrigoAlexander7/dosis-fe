@@ -1,56 +1,107 @@
 # DosisFe 🩸
 
-> Diagnóstico rápido y preciso de anemia. Hacia un estándar médico digital.
+> Sistema integral para el diagnóstico, tratamiento y seguimiento de la anemia.
 
 ## 📱 Descripción
 
-**DosisFe** es una aplicación móvil desarrollada con **React Native y Expo (EAS)** que busca mejorar el diagnóstico y seguimiento de la anemia. A través de la recolección de datos básicos del paciente, como edad, sexo, gestación y niveles de hemoglobina, la app entrega un diagnóstico inmediato basado en reglas clínicas.
+**DosisFe** es una solución tecnológica completa diseñada para asistir a profesionales de la salud en el diagnóstico y tratamiento de la anemia. La plataforma combina una aplicación móvil intuitiva con un potente backend para gestionar pacientes, calcular dosis de suplementos de hierro y realizar seguimiento de tratamientos.
 
-El objetivo a largo plazo es que **DosisFe** evolucione hasta convertirse en un asistente médico inteligente capaz de:
+El sistema permite:
+* Diagnóstico inmediato de anemia ajustado por altitud y condiciones del paciente.
+* Cálculo preciso de dosis de suplementos (Hierro Polimaltosado, Sulfato Ferroso, etc.).
+* Gestión de historias clínicas y visitas.
+* Autenticación segura para profesionales de la salud.
 
-* Registrar y mostrar el historial de hemoglobina de los pacientes.
-* Sugerir el tipo de sulfato ferroso y la dosis adecuada según peso, talla, edad y otros indicadores.
-* Brindar soporte a médicos en zonas rurales o con acceso limitado a especialistas.
+## 🚀 Tecnologías
 
-🚀 Tecnologías
-<div align="left"> <a href="https://reactnative.dev/"> <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native" /> </a> <a href="https://expo.dev/"> <img src="https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo" /> </a> <a href="https://www.typescriptlang.org/"> <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /> </a> <a href="https://callstack.github.io/react-native-paper/"> <img src="https://img.shields.io/badge/React_Native_Paper-6200EE?style=for-the-badge&logoColor=white" alt="React Native Paper" /> </a> <a href="https://wix.github.io/react-native-ui-lib/"> <img src="https://img.shields.io/badge/UI--Lib-E91E63?style=for-the-badge&logo=react&logoColor=white" alt="React Native UI Lib" /> </a> </div>
-* Actualmente backend en desarrollo (pronto para versiones futuras)
-
-## 📸 ScreenShots
-
-<div align="center">
-  <img width="1920" height="1440" alt="projectDosisFe" src="https://github.com/user-attachments/assets/c312f655-3fa3-4a52-843b-4178e15a2af0" />
+### Frontend (Móvil)
+<div align="left">
+  <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native" />
+  <img src="https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/React_Query-FF4154?style=for-the-badge&logo=react-query&logoColor=white" alt="React Query" />
 </div>
 
+### Backend (API)
+<div align="left">
+  <img src="https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white" alt="NestJS" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" />
+  <img src="https://img.shields.io/badge/Passport-34E27A?style=for-the-badge&logo=passport&logoColor=white" alt="Passport" />
+</div>
 
-## 🛠️ Instalación y uso
+## ✨ Funcionalidades Completadas
 
-### 1. Clona el repositorio
+### 🔐 Seguridad y Acceso
+* **Autenticación Robusta**: Implementación de **Passport** con estrategias JWT para proteger los datos sensibles.
+* **Roles y Permisos**: Gestión de acceso para diferentes tipos de usuarios (Administradores, Personal de Salud).
+
+### 👥 Gestión de Pacientes
+* **Expediente Digital**: Registro completo de pacientes incluyendo DNI, fecha de nacimiento, género y ubicación.
+* **Historial Clínico**: Visualización cronológica de visitas, diagnósticos y tratamientos previos.
+* **Búsqueda Avanzada**: Localización rápida de pacientes por DNI.
+
+### 🩺 Diagnóstico y Tratamiento Inteligente
+* **Calculadora de Anemia**: 
+  * Diagnóstico automático basado en niveles de hemoglobina.
+  * **Ajuste por Altitud**: Integración con base de datos de factores de ajuste por distrito y centro poblado.
+* **Calculadora de Dosis**: 
+  * Algoritmo preciso para determinar la dosis de hierro elemental.
+  * Soporte para múltiples tipos de suplementos (Gotas, Jarabe, Tabletas).
+  * Consideración de peso, edad y condiciones especiales (Gestación, Puerperio).
+* **Prescripciones**: Generación automática de indicaciones de tratamiento y duración.
+
+## 🛠️ Instalación y Despliegue
+
+### Prerrequisitos
+* Node.js (v18+)
+* PostgreSQL
+* PNPM (recomendado) o NPM
+
+### 1. Configuración del Backend
 
 ```bash
-git clone https://github.com/RodrigoAlexander7/DosisFe.git
-cd DosisFe
+cd apps/backend
+
+# Instalar dependencias
+pnpm install
+
+# Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus credenciales de base de datos y secretos JWT
+
+# Inicializar base de datos
+npx prisma generate
+npx prisma migrate deploy
+
+# Iniciar servidor de desarrollo
+pnpm start:dev
 ```
 
-### 2. Instala las dependencias
+### 2. Configuración del Frontend
 
 ```bash
-npm install
-```
+cd apps/presentation
 
-### 3. Corre la app
+# Instalar dependencias
+pnpm install
 
-```bash
+# Iniciar con Expo
 npx expo start
 ```
 
-### 4. Corre la app en tu telefono
+## 📂 Estructura del Proyecto
 
-Descarga la app directamente desde **Expo EAS** usando el siguiente enlace:
-📲 [Descargar App DosisFe en Expo](https://expo.dev/accounts/rodrygoleu/projects/IronSuplementCalculator/builds/c1840303-c7f8-493e-bc83-af0b53d09e1b)
-Una vez dentro podras ver el servidor (el que iniciamos localmente con `npm run dev`) selecionalo y tendras la aplicacion corriendo en tu telefono!
+El proyecto sigue una arquitectura moderna de monorepo:
 
+* `apps/backend`: API RESTful construida con **NestJS**, siguiendo principios de arquitectura limpia y modular.
+* `apps/presentation`: Aplicación móvil construida con **Expo**, optimizada para Android e iOS.
+* `DB`: Scripts de inicialización y esquemas de base de datos.
+* `utils`: Herramientas de procesamiento de datos y scripts de utilidad.
 
-## 🧠 Visión a largo plazo
+## 🤝 Contribución
 
-DosisFe busca convertirse en una **herramienta estándar de diagnóstico médico**, especialmente útil en zonas de difícil acceso. Permitirá a profesionales de salud contar con asistencia tecnológica confiable y validada clínicamente.
+Las contribuciones son bienvenidas para seguir mejorando esta herramienta vital para la salud pública.
+
+---
+© 2025 DosisFe. Todos los derechos reservados.
