@@ -1,5 +1,6 @@
 import { Image } from "expo-image";
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { AppColors } from '@/utils/styles/colors';
 
 export default function HomeScreen() {
   const blurhash =
@@ -42,30 +43,30 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: AppColors.background.secondary,
     alignItems: "center",
     padding: 20,
   },
   title: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#1e293b",
+    color: AppColors.text.primary,
     marginBottom: 10,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
-    color: "#475569",
+    color: AppColors.text.secondary,
     textAlign: "center",
     marginBottom: 20,
     lineHeight: 22,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: AppColors.background.primary,
     borderRadius: 16,
     padding: 15,
     marginBottom: 20,
-    shadowColor: "#000",
+    shadowColor: AppColors.shadow,
     shadowOpacity: 0.1,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 4 },
@@ -83,12 +84,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginTop: 10,
     marginBottom: 4,
-    color: "#0f172a",
+    color: AppColors.text.primary,
   },
   sectionSubtitle: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#334155",
+    color: AppColors.text.primary,
     marginBottom: 8,
   },
   list: {
@@ -96,10 +97,10 @@ const styles = StyleSheet.create({
   },
   item: {
     fontSize: 15,
-    color: "#1e293b",
+    color: AppColors.text.primary,
     paddingVertical: 6,
     paddingHorizontal: 12,
-    backgroundColor: "#e2e8f0",
+    backgroundColor: AppColors.border.medium,
     borderRadius: 8,
     marginBottom: 6,
   },

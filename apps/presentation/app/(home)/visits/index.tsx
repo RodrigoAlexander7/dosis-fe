@@ -15,6 +15,7 @@ import { visitsApi } from '@/services/api/visits.api';
 import { VisitCard } from '@/components/VisitCard';
 import { AnemiaSeverity } from '@/services/types/patient.types';
 import dayjs from 'dayjs';
+import { AppColors } from '@/utils/styles/colors';
 import 'dayjs/locale/es';
 
 dayjs.locale('es');
@@ -73,7 +74,7 @@ export default function VisitsListScreen() {
                   keyboardType="numeric"
                   maxLength={8}
                   placeholder="12345678"
-                  placeholderTextColor="#A0AEC0"
+                  placeholderTextColor={AppColors.text.placeholder}
                />
             </View>
 
@@ -119,7 +120,7 @@ export default function VisitsListScreen() {
 
             {hasActiveFilters && (
                <TouchableOpacity style={styles.clearButton} onPress={handleClearFilters}>
-                  <Ionicons name="close-circle" size={20} color="#F44336" />
+                  <Ionicons name="close-circle" size={20} color={AppColors.error} />
                   <Text style={styles.clearButtonText}>Limpiar Filtros</Text>
                </TouchableOpacity>
             )}
@@ -131,13 +132,13 @@ export default function VisitsListScreen() {
                {visits ? `${visits.length} ${visits.length === 1 ? 'visita' : 'visitas'}` : 'Visitas'}
             </Text>
             <TouchableOpacity onPress={() => refetch()} style={styles.refreshButton}>
-               <Ionicons name="refresh" size={20} color="#2196F3" />
+               <Ionicons name="refresh" size={20} color={AppColors.primary} />
             </TouchableOpacity>
          </View>
 
          {isLoading ? (
             <View style={styles.centered}>
-               <ActivityIndicator size="large" color="#2196F3" />
+               <ActivityIndicator size="large" color={AppColors.primary} />
                <Text style={styles.loadingText}>Cargando visitas...</Text>
             </View>
          ) : (
@@ -153,7 +154,7 @@ export default function VisitsListScreen() {
                contentContainerStyle={styles.listContent}
                ListEmptyComponent={
                   <View style={styles.emptyState}>
-                     <Ionicons name="document-text-outline" size={64} color="#ccc" />
+                     <Ionicons name="document-text-outline" size={64} color={AppColors.disabled} />
                      <Text style={styles.emptyText}>
                         {hasActiveFilters
                            ? 'No se encontraron visitas con los filtros aplicados'
@@ -170,18 +171,18 @@ export default function VisitsListScreen() {
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      backgroundColor: '#F4F7FC',
+      backgroundColor: AppColors.background.secondary,
    },
    filtersCard: {
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       padding: 16,
       borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
+      borderBottomColor: AppColors.border.medium,
    },
    filtersTitle: {
       fontSize: 18,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 16,
    },
    inputGroup: {
@@ -190,16 +191,16 @@ const styles = StyleSheet.create({
    label: {
       fontSize: 14,
       fontWeight: '500',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 8,
    },
    textInput: {
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: AppColors.border.medium,
       borderRadius: 8,
       padding: 12,
       fontSize: 16,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
    },
    dateRow: {
       flexDirection: 'row',
@@ -211,16 +212,16 @@ const styles = StyleSheet.create({
    },
    datePicker: {
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: AppColors.border.medium,
       borderRadius: 8,
       padding: 12,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
    },
    picker: {
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: AppColors.border.medium,
       borderRadius: 8,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
    },
    clearButton: {
       flexDirection: 'row',
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
    },
    clearButtonText: {
       fontSize: 14,
-      color: '#F44336',
+      color: AppColors.error,
       fontWeight: '500',
    },
    resultsHeader: {
@@ -240,14 +241,14 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: 16,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
+      borderBottomColor: AppColors.border.medium,
    },
    resultsTitle: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    refreshButton: {
       padding: 8,
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
    loadingText: {
       marginTop: 16,
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    listContent: {
       padding: 16,
@@ -273,7 +274,7 @@ const styles = StyleSheet.create({
    },
    emptyText: {
       fontSize: 16,
-      color: '#999',
+      color: AppColors.text.tertiary,
       marginTop: 16,
       textAlign: 'center',
    },

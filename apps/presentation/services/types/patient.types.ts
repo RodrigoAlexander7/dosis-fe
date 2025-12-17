@@ -82,7 +82,10 @@ export interface Prescription {
    idSupplement: string;
    prescribedDose: number;
    treatmentDurationDays: number;
-   prescriptionNotes: string;
+   treatmentMonths: number;
+   numberOfBottles: number;
+   unitMeasure: string;
+   prescriptionNotes: string | null;
    createdAt: string;
    supplement?: Supplement;
 }

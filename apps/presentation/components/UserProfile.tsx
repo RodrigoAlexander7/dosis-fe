@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { authService } from '@/services/authService';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
+import { AppColors, getRoleColor } from '@/utils/styles/colors';
 
 export default function UserProfile() {
    const { user, clearAuth } = useAuthStore();
@@ -35,10 +36,7 @@ export default function UserProfile() {
       return role === 'DOCTOR' ? 'Médico' : 'Enfermera';
    };
 
-   const getRoleColor = (role: string | null) => {
-      if (!role) return '#9E9E9E';
-      return role === 'DOCTOR' ? '#2196F3' : '#4CAF50';
-   };
+   // getRoleColor now imported from colors.ts
 
    return (
       <View style={styles.container}>
@@ -51,7 +49,7 @@ export default function UserProfile() {
                />
             ) : (
                <View style={styles.avatarPlaceholder}>
-                  <MaterialIcons name="person" size={40} color="#fff" />
+                  <MaterialIcons name="person" size={40} color={AppColors.text.white} />
                </View>
             )}
 
@@ -66,7 +64,7 @@ export default function UserProfile() {
 
          {!user.role && (
             <View style={styles.warningContainer}>
-               <MaterialIcons name="warning" size={20} color="#FF9800" />
+               <MaterialIcons name="warning" size={20} color={AppColors.warning} />
                <Text style={styles.warningText}>
                   Tu rol aún no ha sido asignado. Contacta con un administrador.
                </Text>
@@ -74,7 +72,7 @@ export default function UserProfile() {
          )}
 
          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <MaterialIcons name="logout" size={20} color="#f44336" />
+            <MaterialIcons name="logout" size={20} color={AppColors.error} />
             <Text style={styles.logoutText}>Cerrar sesión</Text>
          </TouchableOpacity>
       </View>
@@ -83,13 +81,13 @@ export default function UserProfile() {
 
 const styles = StyleSheet.create({
    container: {
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       borderRadius: 12,
       padding: 16,
       marginHorizontal: 16,
       marginTop: 16,
       elevation: 2,
-      shadowColor: '#000',
+      shadowColor: AppColors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -108,7 +106,7 @@ const styles = StyleSheet.create({
       width: 60,
       height: 60,
       borderRadius: 30,
-      backgroundColor: '#2196F3',
+      backgroundColor: AppColors.primary,
       justifyContent: 'center',
       alignItems: 'center',
    },
@@ -119,11 +117,11 @@ const styles = StyleSheet.create({
    userName: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: '#333',
+      color: AppColors.text.primary,
    },
    userEmail: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
       marginTop: 4,
    },
    roleBadge: {
@@ -136,12 +134,12 @@ const styles = StyleSheet.create({
    roleText: {
       fontSize: 12,
       fontWeight: '600',
-      color: '#fff',
+      color: AppColors.text.white,
    },
    warningContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: '#FFF3E0',
+      backgroundColor: AppColors.background.warning,
       padding: 12,
       borderRadius: 8,
       marginBottom: 16,
@@ -150,7 +148,7 @@ const styles = StyleSheet.create({
       flex: 1,
       marginLeft: 8,
       fontSize: 12,
-      color: '#E65100',
+      color: AppColors.warning,
    },
    logoutButton: {
       flexDirection: 'row',
@@ -159,12 +157,12 @@ const styles = StyleSheet.create({
       paddingVertical: 12,
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: '#f44336',
+      borderColor: AppColors.error,
    },
    logoutText: {
       marginLeft: 8,
       fontSize: 14,
       fontWeight: '600',
-      color: '#f44336',
+      color: AppColors.error,
    },
 });

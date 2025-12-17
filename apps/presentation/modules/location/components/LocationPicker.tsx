@@ -5,6 +5,7 @@ import { usePatientStore } from '@/modules/patient/store/patientStore';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button, Colors, Picker, TextField } from 'react-native-ui-lib';
+import { AppColors } from '@/utils/styles/colors';
 
 export function LocationPicker() {
    const isValid = () => {
@@ -66,7 +67,7 @@ export function LocationPicker() {
                   value={hb}
                   keyboardType="decimal-pad"
                   placeholder="Ej: 12.5"
-                  placeholderTextColor="#A0AEC0"
+                  placeholderTextColor={AppColors.text.placeholder}
                   underlineColorAndroid="transparent"
                />
             </View>
@@ -81,7 +82,7 @@ export function LocationPicker() {
                      showSearch
                      preset='outline'
                      placeholder='Selecciona Departamento'
-                     placeholderTextColor="#A0AEC0"
+                     placeholderTextColor={AppColors.text.placeholder}
                      items={departmentItems}
                      value={location.department}
                      onChange={onLocationChange('department')}
@@ -96,7 +97,7 @@ export function LocationPicker() {
                      showSearch
                      preset='outline'
                      placeholder='Selecciona Provincia'
-                     placeholderTextColor="#A0AEC0"
+                     placeholderTextColor={AppColors.text.placeholder}
                      editable={location.department !== ''}
                      items={provinceItems}
                      value={location.province}
@@ -112,7 +113,7 @@ export function LocationPicker() {
                      showSearch
                      preset='outline'
                      placeholder='Selecciona Distrito'
-                     placeholderTextColor="#A0AEC0"
+                     placeholderTextColor={AppColors.text.placeholder}
                      editable={location.province !== ''}
                      items={districtItems}
                      value={location.district}
@@ -128,7 +129,7 @@ export function LocationPicker() {
                      showSearch
                      preset='outline'
                      placeholder='Selecciona Centro Poblado'
-                     placeholderTextColor="#A0AEC0"
+                     placeholderTextColor={AppColors.text.placeholder}
                      editable={location.district !== ''}
                      items={townItems}
                      value={location.town}
@@ -165,13 +166,13 @@ const styles = StyleSheet.create({
    container: {
       flexGrow: 1,
       padding: 20,
-      backgroundColor: '#F4F7FC',
+      backgroundColor: AppColors.background.secondary,
    },
    formContainer: {
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background.primary,
       borderRadius: 16,
       padding: 20,
-      shadowColor: "#000",
+      shadowColor: AppColors.shadow,
       shadowOffset: {
          width: 0,
          height: 2,
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 22,
       fontWeight: '700',
-      color: '#1a73e8',
+      color: AppColors.primary,
       textAlign: 'center',
       marginBottom: 20,
    },
@@ -193,16 +194,16 @@ const styles = StyleSheet.create({
    label: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#2D3748',
+      color: AppColors.text.primary,
       marginBottom: 8,
    },
    textInput: {
       borderWidth: 1,
-      borderColor: '#E2E8F0',
+      borderColor: AppColors.border.medium,
       borderRadius: 12,
       padding: 14,
       fontSize: 16,
-      backgroundColor: '#F7FAFC',
+      backgroundColor: AppColors.background.tertiary,
    },
    section: {
       marginBottom: 20,
@@ -210,11 +211,11 @@ const styles = StyleSheet.create({
    sectionTitle: {
       fontSize: 18,
       fontWeight: '600',
-      color: '#1a73e8',
+      color: AppColors.primary,
       marginBottom: 15,
       paddingBottom: 8,
       borderBottomWidth: 1,
-      borderBottomColor: '#E2E8F0',
+      borderBottomColor: AppColors.border.medium,
    },
    pickerGroup: {
       marginBottom: 15,
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
    pickerLabel: {
       fontSize: 14,
       fontWeight: '600',
-      color: '#2D3748',
+      color: AppColors.text.primary,
       marginBottom: 6,
    },
    picker: {
@@ -230,17 +231,17 @@ const styles = StyleSheet.create({
    },
    pickerField: {
       borderWidth: 1,
-      borderColor: '#E2E8F0',
+      borderColor: AppColors.border.medium,
       borderRadius: 12,
       padding: 12,
-      backgroundColor: '#F7FAFC',
+      backgroundColor: AppColors.background.tertiary,
    },
    submitButton: {
       height: 50,
       borderRadius: 12,
       marginTop: 10,
       marginBottom: 20,
-      shadowColor: "#1a73e8",
+      shadowColor: AppColors.primary,
       shadowOffset: {
          width: 0,
          height: 2,
@@ -259,27 +260,27 @@ const styles = StyleSheet.create({
    resultTitle: {
       fontSize: 18,
       fontWeight: '600',
-      color: '#2D3748',
+      color: AppColors.text.primary,
       marginBottom: 10,
       textAlign: 'center',
    },
    resultBox: {
-      backgroundColor: '#EBF8FF',
+      backgroundColor: AppColors.background.info,
       borderRadius: 12,
       padding: 16,
       borderLeftWidth: 4,
-      borderLeftColor: '#3182CE',
+      borderLeftColor: AppColors.info,
    },
    diagnosticText: {
       fontSize: 16,
       fontWeight: '700',
-      color: '#2C5282',
+      color: AppColors.info,
       marginBottom: 8,
       textAlign: 'center',
    },
    patientInfo: {
       fontSize: 14,
-      color: '#4A5568',
+      color: AppColors.text.secondary,
       lineHeight: 20,
    },
 });

@@ -7,6 +7,7 @@ import {
    TouchableOpacity,
    Alert,
    ActivityIndicator,
+   Image,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -17,13 +18,32 @@ import { Ionicons } from '@expo/vector-icons';
 import { visitsApi } from '@/services/api/visits.api';
 import { patientsApi } from '@/services/api/patients.api';
 import { supplementsApi } from '@/services/api/supplements.api';
+import { SupplementCalculatorService } from '@/services/supplement-calculator.service';
 import { CreatePatientVisitDto } from '@/services/types/visit.types';
 import { Gender, FemaleAdditional, GestationTrimester, AnemiaSeverity } from '@/services/types/patient.types';
 import { useHemoglobinCalculations } from '@/hooks/useHemoglobinCalculations';
 import { Picker } from 'react-native-ui-lib';
 import { getErrorMessage } from '@/utils/errorHandler';
+import { getSupplementImage, defaultSupplementImage } from '@/utils/supplementImages';
+import { AppColors, getAnemiaSeverityColor } from '@/utils/styles/colors';
+import { AnemiaDiagnosisCard } from '@/modules/visits/components/AnemiaDiagnosisCard';
+import { SupplementSelector } from '@/modules/visits/components/SupplementSelector';
+import { useSupplementCalculation } from '@/modules/visits/hooks/useSupplementCalculation';
 
 dayjs.locale('es');
+
+// Helper functions
+// Note: getSeverityColor is now imported from colors.ts as getAnemiaSeverityColor
+
+const getSeverityLabel = (severity: AnemiaSeverity): string => {
+   switch (severity) {
+      case AnemiaSeverity.NONE: return 'Sin Anemia';
+      case AnemiaSeverity.MILD: return 'Anemia Leve';
+      case AnemiaSeverity.MODERATE: return 'Anemia Moderada';
+      case AnemiaSeverity.SEVERE: return 'Anemia Severa';
+      default: return 'Desconocido';
+   }
+};
 
 export default function CreateVisitScreen() {
    const router = useRouter();
@@ -39,6 +59,7 @@ export default function CreateVisitScreen() {
    const [femaleAditional, setFemaleAditional] = useState<'G' | 'P' | ''>('');
    const [gestationTime, setGestationTime] = useState<'1' | '2' | '3' | ''>('');
    const [selectedSupplementId, setSelectedSupplementId] = useState<string>('');
+   const [treatmentMonths, setTreatmentMonths] = useState<number>(1);
    const [prescriptionNotes, setPrescriptionNotes] = useState<string>('');
 
    // Auto-load patient when URL has DNI
@@ -148,28 +169,48 @@ export default function CreateVisitScreen() {
          gestationTrimester: backendTypes.gestationTrimester,
       };
 
-      // Agregar prescripción si hay suplemento seleccionado y cálculos disponibles
-      if (selectedSupplementId && supplementDoseResult) {
-         const isAdult = patientAgeDays && patientAgeDays >= 5475; // 15 años = 5475 días
+      // Agregar prescripción si hay suplemento seleccionado
+      if (selectedSupplementId && selectedSupplement && patientAgeDays) {
          const isAnemic = calculations.anemiaSeverity !== AnemiaSeverity.NONE;
-         const treatmentDays = isAdult
-            ? 180  // 6 meses para adultos
-            : (isAnemic ? 180 : 90); // 6 meses si anémico, 3 meses prevención
+         const isFemalePregnantOrLactating = femaleAditional === 'G' || femaleAditional === 'P';
 
-         createDto.prescriptions = [{
-            idSupplement: selectedSupplementId,
-            prescribedDose: supplementDoseResult.doseAmount,
-            treatmentDurationDays: treatmentDays,
-            prescriptionNotes: prescriptionNotes || `${supplementDoseResult.supplement.name} - ${supplementDoseResult.doseAmount.toFixed(2)} mg diarios`,
-         }];
+         // Find appropriate dosing guideline
+         const dosingGuideline = selectedSupplement.dosingGuidelines.find(
+            guideline => patientAgeDays >= guideline.fromAgeDays && patientAgeDays <= guideline.toAgeDays
+         );
+
+         if (dosingGuideline) {
+            // Calculate prescription using service
+            const prescriptionData = SupplementCalculatorService.calculatePrescription({
+               supplement: selectedSupplement,
+               patientAgeDays,
+               patientWeight: Number(weight),
+               isAnemic,
+               patientGender: patient.gender,
+               anemiaSeverity: calculations.anemiaSeverity,
+               treatmentMonths,
+               doseAmount: dosingGuideline.doseAmount,
+               isFemalePregnantOrLactating,
+            });
+
+            createDto.prescriptions = [{
+               idSupplement: selectedSupplementId,
+               prescribedDose: prescriptionData.prescribedDose,
+               treatmentDurationDays: prescriptionData.treatmentDurationDays,
+               treatmentMonths: treatmentMonths,
+               numberOfBottles: prescriptionData.numberOfBottles,
+               unitMeasure: prescriptionData.unitMeasure,
+               prescriptionNotes: prescriptionNotes || `${selectedSupplement.name} - ${prescriptionData.prescribedDose.toFixed(2)} ${prescriptionData.unitMeasure} por toma`,
+            }];
+         }
       }
 
       createMutation.mutate(createDto);
    };
 
-   // Calculate supplement dose based on patient data
-   const calculateSupplementDose = () => {
-      if (!selectedSupplement || !patient || !weight || !patientAgeDays) return null;
+   // Calculate supplement dose preview for UI with complete calculations
+   const supplementDosePreview = React.useMemo(() => {
+      if (!selectedSupplement || !patient || !weight || !patientAgeDays || !hbObserved) return null;
 
       // Find appropriate dosing guideline for patient age
       const dosingGuideline = selectedSupplement.dosingGuidelines.find(
@@ -178,23 +219,92 @@ export default function CreateVisitScreen() {
 
       if (!dosingGuideline) return null;
 
-      // Calculate dose: weight * doseAmount mg/kg
-      const calculatedDose = Number(weight) * dosingGuideline.doseAmount;
+      // Calculate hemoglobin to determine if anemic
+      const altitudeAdjustment = patient.town?.altitudeAdjustment
+         ? Number(patient.town.altitudeAdjustment)
+         : 0;
+
+      const patientGender = patient.gender === Gender.MALE ? 'M' : 'F' as 'M' | 'F';
+      const mappedFemaleAdditional = femaleAditional === '' ? null : femaleAditional;
+      const mappedGestationTime = gestationTime === '' ? null : gestationTime;
+
+      const backendTypes = mapExistingToBackend({
+         gender: patientGender,
+         femaleAditional: mappedFemaleAdditional,
+         gestationTime: mappedGestationTime,
+      });
+
+      const calculations = calculate({
+         hbObserved: Number(hbObserved),
+         altitudeAdjustment,
+         birthDate: patient.birthDate,
+         gender: backendTypes.gender,
+         femaleAdditional: backendTypes.femaleAdditional,
+         gestationTrimester: backendTypes.gestationTrimester,
+      });
+
+      const isAnemic = calculations.anemiaSeverity !== AnemiaSeverity.NONE;
+      const isFemalePregnantOrLactating = femaleAditional === 'G' || femaleAditional === 'P';
+
+      // Calculate full prescription data for preview
+      const prescriptionData = SupplementCalculatorService.calculatePrescription({
+         supplement: selectedSupplement,
+         patientAgeDays,
+         patientWeight: Number(weight),
+         isAnemic,
+         patientGender: patient.gender,
+         anemiaSeverity: calculations.anemiaSeverity,
+         treatmentMonths,
+         doseAmount: dosingGuideline.doseAmount,
+         isFemalePregnantOrLactating,
+      });
 
       return {
          supplement: selectedSupplement,
-         doseAmount: calculatedDose,
          guideline: dosingGuideline,
+         ...prescriptionData,
       };
-   };
+   }, [selectedSupplement, patient, weight, patientAgeDays, hbObserved, femaleAditional, gestationTime, treatmentMonths]);
 
-   const supplementDoseResult = calculateSupplementDose();
+   // Alternative: Use custom hook (commented for now, can replace above code)
+   // const supplementDosePreview = useSupplementCalculation({
+   //    selectedSupplement,
+   //    patient,
+   //    weight: weight ? Number(weight) : null,
+   //    patientAgeDays,
+   //    hbObserved: hbObserved ? Number(hbObserved) : null,
+   //    femaleAditional,
+   //    gestationTime,
+   //    treatmentMonths,
+   // });
 
-   return (
+   // Calculate anemia diagnosis for display
+   const anemiaDiagnosis = React.useMemo(() => {
+      if (!patient || !weight || !hbObserved) return null;
+
+      const altitudeAdjustment = patient.town?.altitudeAdjustment ? Number(patient.town.altitudeAdjustment) : 0;
+      const patientGender = patient.gender === Gender.MALE ? 'M' : 'F' as 'M' | 'F';
+      const mappedFemaleAdditional = femaleAditional === '' ? null : femaleAditional;
+      const mappedGestationTime = gestationTime === '' ? null : gestationTime;
+      const backendTypes = mapExistingToBackend({
+         gender: patientGender,
+         femaleAditional: mappedFemaleAdditional,
+         gestationTime: mappedGestationTime,
+      });
+
+      return calculate({
+         hbObserved: Number(hbObserved),
+         altitudeAdjustment,
+         birthDate: patient.birthDate,
+         gender: backendTypes.gender,
+         femaleAdditional: backendTypes.femaleAdditional,
+         gestationTrimester: backendTypes.gestationTrimester,
+      });
+   }, [patient, weight, hbObserved, femaleAditional, gestationTime]); return (
       <ScrollView style={styles.container}>
          <View style={styles.header}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-               <Ionicons name="arrow-back" size={24} color="#2196F3" />
+               <Ionicons name="arrow-back" size={24} color={AppColors.primary} />
             </TouchableOpacity>
             <Text style={styles.title}>Nueva Visita</Text>
          </View>
@@ -213,7 +323,7 @@ export default function CreateVisitScreen() {
                      keyboardType="numeric"
                      maxLength={8}
                      placeholder="12345678"
-                     placeholderTextColor="#A0AEC0"
+                     placeholderTextColor={AppColors.text.placeholder}
                      editable={!urlDni}
                   />
                </View>
@@ -229,13 +339,13 @@ export default function CreateVisitScreen() {
             </View>
 
             {isLoading && (
-               <ActivityIndicator size="large" color="#2196F3" style={styles.loader} />
+               <ActivityIndicator size="large" color={AppColors.primary} style={styles.loader} />
             )}
 
             {patient && (
                <View style={styles.patientInfo}>
                   <View style={styles.patientHeader}>
-                     <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+                     <Ionicons name="checkmark-circle" size={24} color={AppColors.success} />
                      <Text style={styles.patientFoundText}>Paciente encontrado</Text>
                   </View>
                   <View style={styles.patientDetails}>
@@ -261,7 +371,7 @@ export default function CreateVisitScreen() {
 
             {searchedDni && !patient && !isLoading && (
                <View style={styles.errorInfo}>
-                  <Ionicons name="alert-circle" size={24} color="#F44336" />
+                  <Ionicons name="alert-circle" size={24} color={AppColors.error} />
                   <Text style={styles.errorText}>
                      No se encontró ningún paciente con ese DNI
                   </Text>
@@ -282,7 +392,7 @@ export default function CreateVisitScreen() {
                         onChangeText={setWeight}
                         keyboardType="decimal-pad"
                         placeholder="65.5"
-                        placeholderTextColor="#A0AEC0"
+                        placeholderTextColor={AppColors.text.placeholder}
                      />
                   </View>
 
@@ -294,7 +404,7 @@ export default function CreateVisitScreen() {
                         onChangeText={setHbObserved}
                         keyboardType="decimal-pad"
                         placeholder="12.5"
-                        placeholderTextColor="#A0AEC0"
+                        placeholderTextColor={AppColors.text.placeholder}
                      />
                   </View>
 
@@ -334,102 +444,36 @@ export default function CreateVisitScreen() {
 
                   {patient.town && (
                      <View style={styles.adjustmentInfo}>
-                        <Ionicons name="information-circle" size={20} color="#2196F3" />
+                        <Ionicons name="information-circle" size={20} color={AppColors.primary} />
                         <Text style={styles.adjustmentText}>
                            Ajuste por altitud: +{patient.town.altitudeAdjustment} g/dL
                         </Text>
                      </View>
                   )}
+
+                  {/* Anemia Diagnosis Display - Using Modular Component */}
+                  {anemiaDiagnosis && (
+                     <AnemiaDiagnosisCard
+                        hbAdjusted={anemiaDiagnosis.hbAdjusted}
+                        anemiaSeverity={anemiaDiagnosis.anemiaSeverity}
+                        severityLabel={getSeverityLabel(anemiaDiagnosis.anemiaSeverity)}
+                     />
+                  )}
                </View>
 
                {/* Supplement Selection */}
                {weight && hbObserved && (
-                  <View style={styles.card}>
-                     <Text style={styles.sectionTitle}>Suplementación</Text>
-
-                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Tipo de Suplemento</Text>
-                        <Picker
-                           value={selectedSupplementId}
-                           items={supplements.map(s => ({ label: s.name, value: s.idSupplement }))}
-                           onChange={(value) => setSelectedSupplementId(value as string)}
-                           style={styles.picker}
-                           placeholder="Seleccionar suplemento..."
-                           showSearch
-                           searchPlaceholder="Buscar..."
-                        />
-                     </View>
-
-                     {supplementDoseResult && (
-                        <View style={styles.supplementResult}>
-                           <View style={styles.supplementHeader}>
-                              <Ionicons name="medical" size={24} color="#4CAF50" />
-                              <Text style={styles.supplementTitle}>
-                                 {patientAgeDays && patientAgeDays >= 5475 ? 'Tratamiento Adulto' : 'Tratamiento Pediátrico'}
-                              </Text>
-                           </View>
-
-                           <View style={styles.supplementDetails}>
-                              <Text style={styles.supplementProduct}>
-                                 {supplementDoseResult.supplement.name}
-                              </Text>
-
-                              <View style={styles.doseInfo}>
-                                 <Ionicons name="water" size={16} color="#666" />
-                                 <Text style={styles.doseText}>
-                                    Dosis: {supplementDoseResult.doseAmount.toFixed(2)} mg diarios
-                                 </Text>
-                              </View>
-
-                              <View style={styles.doseInfo}>
-                                 <Ionicons name="calendar" size={16} color="#666" />
-                                 <Text style={styles.doseText}>
-                                    Rango de edad: {supplementDoseResult.guideline.fromAgeDays} - {supplementDoseResult.guideline.toAgeDays} días
-                                 </Text>
-                              </View>
-
-                              <View style={styles.doseInfo}>
-                                 <Ionicons name="fitness" size={16} color="#666" />
-                                 <Text style={styles.doseText}>
-                                    Guía: {supplementDoseResult.guideline.doseAmount} mg/kg/día
-                                 </Text>
-                              </View>
-
-                              {supplementDoseResult.supplement.notes && (
-                                 <View style={styles.notesBox}>
-                                    <Text style={styles.notesLabel}>Notas:</Text>
-                                    <Text style={styles.notesText}>
-                                       {supplementDoseResult.supplement.notes}
-                                    </Text>
-                                 </View>
-                              )}
-                           </View>
-
-                           {/* Campo de notas adicionales */}
-                           <View style={styles.inputGroup}>
-                              <Text style={styles.label}>Notas de la Prescripción (Opcional)</Text>
-                              <TextField
-                                 style={[styles.textInput, styles.textArea]}
-                                 value={prescriptionNotes}
-                                 onChangeText={setPrescriptionNotes}
-                                 placeholder="Ej: Tomar con jugo de naranja, evitar lácteos 2 horas antes..."
-                                 placeholderTextColor="#A0AEC0"
-                                 multiline
-                                 numberOfLines={3}
-                              />
-                           </View>
-                        </View>
-                     )}
-
-                     {!selectedSupplementId && (
-                        <View style={styles.infoBox}>
-                           <Ionicons name="information-circle-outline" size={20} color="#2196F3" />
-                           <Text style={styles.infoText}>
-                              Seleccione un suplemento para calcular la dosis según peso y edad del paciente
-                           </Text>
-                        </View>
-                     )}
-                  </View>
+                  <SupplementSelector
+                     supplements={supplements}
+                     selectedSupplementId={selectedSupplementId}
+                     onSupplementChange={setSelectedSupplementId}
+                     treatmentMonths={treatmentMonths}
+                     onTreatmentMonthsChange={setTreatmentMonths}
+                     prescriptionNotes={prescriptionNotes}
+                     onPrescriptionNotesChange={setPrescriptionNotes}
+                     supplementPreview={supplementDosePreview}
+                     patientAgeDays={patientAgeDays}
+                  />
                )}
 
                <View style={styles.buttonContainer}>
@@ -451,15 +495,15 @@ export default function CreateVisitScreen() {
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      backgroundColor: '#F4F7FC',
+      backgroundColor: AppColors.background.tertiary,
    },
    header: {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 16,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.white,
       borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
+      borderBottomColor: AppColors.border.light,
    },
    backButton: {
       marginRight: 16,
@@ -467,15 +511,15 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    card: {
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.white,
       margin: 16,
       marginBottom: 0,
       borderRadius: 12,
       padding: 16,
-      shadowColor: '#000',
+      shadowColor: AppColors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -484,7 +528,7 @@ const styles = StyleSheet.create({
    sectionTitle: {
       fontSize: 18,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 16,
    },
    searchRow: {
@@ -505,16 +549,16 @@ const styles = StyleSheet.create({
    label: {
       fontSize: 14,
       fontWeight: '500',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 8,
    },
    textInput: {
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: AppColors.border.light,
       borderRadius: 8,
       padding: 12,
       fontSize: 16,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.white,
    },
    textArea: {
       minHeight: 80,
@@ -529,7 +573,7 @@ const styles = StyleSheet.create({
    patientInfo: {
       marginTop: 16,
       padding: 16,
-      backgroundColor: '#E8F5E9',
+      backgroundColor: AppColors.successBackground,
       borderRadius: 8,
    },
    patientHeader: {
@@ -541,7 +585,7 @@ const styles = StyleSheet.create({
    patientFoundText: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#2E7D32',
+      color: AppColors.successText,
    },
    patientDetails: {
       gap: 6,
@@ -549,12 +593,12 @@ const styles = StyleSheet.create({
    patientName: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 8,
    },
    patientDetail: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    errorInfo: {
       flexDirection: 'row',
@@ -562,26 +606,26 @@ const styles = StyleSheet.create({
       gap: 12,
       marginTop: 16,
       padding: 16,
-      backgroundColor: '#FFEBEE',
+      backgroundColor: AppColors.errorLight,
       borderRadius: 8,
    },
    errorText: {
       flex: 1,
       fontSize: 14,
-      color: '#C62828',
+      color: AppColors.errorDark,
    },
    adjustmentInfo: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 8,
       padding: 12,
-      backgroundColor: '#E3F2FD',
+      backgroundColor: AppColors.primaryLight,
       borderRadius: 8,
       marginTop: 8,
    },
    adjustmentText: {
       fontSize: 14,
-      color: '#1976D2',
+      color: AppColors.primaryDark,
       fontWeight: '500',
    },
    buttonContainer: {
@@ -597,12 +641,12 @@ const styles = StyleSheet.create({
    },
    picker: {
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: AppColors.border.light,
       borderRadius: 8,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.white,
    },
    supplementResult: {
-      backgroundColor: '#F1F8F4',
+      backgroundColor: AppColors.successLight,
       borderRadius: 8,
       padding: 16,
       marginTop: 12,
@@ -616,7 +660,15 @@ const styles = StyleSheet.create({
    supplementTitle: {
       fontSize: 18,
       fontWeight: '600',
-      color: '#2E7D32',
+      color: AppColors.successText,
+   },
+   supplementImage: {
+      width: 120,
+      height: 120,
+      borderRadius: 8,
+      marginBottom: 16,
+      backgroundColor: AppColors.border.light,
+      alignSelf: 'center',
    },
    supplementDetails: {
       gap: 12,
@@ -624,7 +676,7 @@ const styles = StyleSheet.create({
    supplementProduct: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 8,
    },
    doseInfo: {
@@ -634,39 +686,80 @@ const styles = StyleSheet.create({
    },
    doseText: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
       flex: 1,
    },
    notesBox: {
       marginTop: 12,
       padding: 12,
-      backgroundColor: '#FFF9E6',
+      backgroundColor: AppColors.warningBackground,
       borderRadius: 6,
       borderLeftWidth: 3,
-      borderLeftColor: '#FFC107',
+      borderLeftColor: AppColors.warningBorder,
    },
    notesLabel: {
       fontSize: 12,
       fontWeight: '600',
-      color: '#F57C00',
+      color: AppColors.warningDark,
       marginBottom: 4,
    },
    notesText: {
       fontSize: 12,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    infoBox: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 12,
       padding: 12,
-      backgroundColor: '#E3F2FD',
+      backgroundColor: AppColors.primaryLight,
       borderRadius: 8,
       marginTop: 12,
    },
    infoText: {
       flex: 1,
       fontSize: 13,
-      color: '#1976D2',
+      color: AppColors.primaryDark,
+   },
+   diagnosisCard: {
+      marginTop: 16,
+      padding: 16,
+      borderRadius: 12,
+      borderWidth: 2,
+   },
+   diagnosisHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      marginBottom: 12,
+   },
+   diagnosisTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: AppColors.text.primary,
+   },
+   diagnosisContent: {
+      marginBottom: 12,
+   },
+   diagnosisLabel: {
+      fontSize: 14,
+      color: AppColors.text.secondary,
+      marginBottom: 4,
+   },
+   diagnosisValue: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: AppColors.text.primary,
+   },
+   diagnosisBadge: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+      alignSelf: 'flex-start',
+   },
+   diagnosisBadgeText: {
+      color: AppColors.white,
+      fontSize: 14,
+      fontWeight: '600',
    },
 });

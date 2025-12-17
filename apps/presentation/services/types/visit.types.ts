@@ -5,6 +5,9 @@ export interface CreatePrescriptionDto {
    idSupplement: string;
    prescribedDose: number;
    treatmentDurationDays: number;
+   treatmentMonths: number;
+   numberOfBottles: number;
+   unitMeasure: string;
    prescriptionNotes?: string;
 }
 

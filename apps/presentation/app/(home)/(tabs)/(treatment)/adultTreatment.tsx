@@ -4,6 +4,7 @@ import { getAdultTreatment } from "@/modules/suplement/services/suplement.servic
 import { router } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-ui-lib";
+import { AppColors } from '@/utils/styles/colors';
 
 export default function AdultTreatment() {
    const { patient } = usePatientStore();
@@ -38,7 +39,7 @@ export default function AdultTreatment() {
             <Button
                label="Nuevo Paciente"
                size={Button.sizes.large}
-               backgroundColor="#1a73e8"
+               backgroundColor={AppColors.primary}
                borderRadius={14}
                style={styles.submitButton}
                labelStyle={styles.submitButtonLabel}
@@ -52,14 +53,14 @@ export default function AdultTreatment() {
 const styles = StyleSheet.create({
    contentContainer: {
       flexGrow: 1,
-      backgroundColor: "#F4F7FC",
+      backgroundColor: AppColors.background.secondary,
       padding: 16,
    },
    card: {
-      backgroundColor: "#fff",
+      backgroundColor: AppColors.background.primary,
       borderRadius: 20,
       padding: 20,
-      shadowColor: "#000",
+      shadowColor: AppColors.shadow,
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.1,
       shadowRadius: 6,
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 24,
       fontWeight: "700",
-      color: "#1a73e8",
+      color: AppColors.primary,
       textAlign: "center",
       marginBottom: 24,
    },
@@ -78,29 +79,29 @@ const styles = StyleSheet.create({
    label: {
       fontSize: 16,
       fontWeight: "600",
-      color: "#2D3748",
+      color: AppColors.text.primary,
       marginBottom: 6,
    },
    patientInfo: {
       fontSize: 14,
-      color: "#4A5568",
+      color: AppColors.text.secondary,
       lineHeight: 20,
    },
    resultText: {
       fontSize: 15,
       fontWeight: "500",
-      color: "#2C5282",
-      backgroundColor: "#EBF8FF",
+      color: AppColors.info,
+      backgroundColor: AppColors.background.info,
       padding: 12,
       borderRadius: 12,
       borderLeftWidth: 4,
-      borderLeftColor: "#3182CE",
+      borderLeftColor: AppColors.info,
    },
    submitButton: {
       marginTop: 20,
       height: 52,
       justifyContent: "center",
-      shadowColor: "#1a73e8",
+      shadowColor: AppColors.primary,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.25,
       shadowRadius: 4,
@@ -109,6 +110,6 @@ const styles = StyleSheet.create({
    submitButtonLabel: {
       fontSize: 16,
       fontWeight: "600",
-      color: "#fff",
+      color: AppColors.text.white,
    },
 });

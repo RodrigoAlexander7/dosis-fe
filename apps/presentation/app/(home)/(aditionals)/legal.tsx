@@ -1,4 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { AppColors } from '@/utils/styles/colors';
 
 export default function HomeScreen() {
    const blurhash =
@@ -22,7 +23,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      backgroundColor: "#f8fafc",
+      backgroundColor: AppColors.background.secondary,
       alignItems: "center",
       padding: 20,
       textAlign: 'center',
@@ -31,13 +32,13 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 26,
       fontWeight: "700",
-      color: "#1e293b",
+      color: AppColors.text.primary,
       marginBottom: 10,
       textAlign: "center",
    },
    subtitle: {
       fontSize: 16,
-      color: "#475569",
+      color: AppColors.text.secondary,
       textAlign: "center",
       marginBottom: 20,
       lineHeight: 22,

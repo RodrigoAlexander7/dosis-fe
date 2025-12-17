@@ -264,7 +264,10 @@ model Prescription {
   idSupplement          String   @map("id_supplement")
   prescribedDose        Decimal  @map("prescribed_dose")
   treatmentDurationDays Int      @map("treatment_duration_days")
-  prescriptionNotes     String   @map("prescription_notes") @db.Text
+  treatmentMonths       Int      @default(1) @map("treatment_months")
+  numberOfBottles       Int      @map("number_of_bottles")
+  unitMeasure           String   @map("unit_measure") @db.VarChar(20)
+  prescriptionNotes     String?  @map("prescription_notes") @db.Text
   createdAt             DateTime @default(now()) @map("created_at") @db.Timestamp(6)
 
   visit      PatientVisit @relation(fields: [visitId], references: [visitId])

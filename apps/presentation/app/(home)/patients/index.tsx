@@ -15,6 +15,9 @@ import { patientsApi } from '@/services/api/patients.api';
 import { SearchPatientDto, AnemiaSeverity } from '@/services/types/patient.types';
 import { PatientCard } from '@/components/PatientCard';
 import { useAuthStore, canCreatePatient } from '@/stores/authStore';
+import { AppColors } from '@/utils/styles/colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 export default function PatientsListScreen() {
    const router = useRouter();
@@ -61,115 +64,117 @@ export default function PatientsListScreen() {
    };
 
    return (
-      <View style={styles.container}>
-         {/* Search Section */}
-         <View style={styles.searchSection}>
-            <View style={styles.searchRow}>
-               <TextInput
-                  style={styles.searchInput}
-                  placeholder="Buscar por DNI"
-                  value={dniSearch}
-                  onChangeText={setDniSearch}
-                  keyboardType="numeric"
-                  maxLength={8}
-               />
-               <TextInput
-                  style={styles.searchInput}
-                  placeholder="Año de nacimiento"
-                  value={yearSearch}
-                  onChangeText={setYearSearch}
-                  keyboardType="numeric"
-                  maxLength={4}
-               />
-            </View>
+      <SafeAreaView style={{ flex: 1 }}>
+         <View style={styles.container}>
+            {/* Search Section */}
+            <View style={styles.searchSection}>
+               <View style={styles.searchRow}>
+                  <TextInput
+                     style={styles.searchInput}
+                     placeholder="Buscar por DNI"
+                     value={dniSearch}
+                     onChangeText={setDniSearch}
+                     keyboardType="numeric"
+                     maxLength={8}
+                  />
+                  <TextInput
+                     style={styles.searchInput}
+                     placeholder="Año de nacimiento"
+                     value={yearSearch}
+                     onChangeText={setYearSearch}
+                     keyboardType="numeric"
+                     maxLength={4}
+                  />
+               </View>
 
-            {/* Severity Filter */}
-            <View style={styles.filterRow}>
-               <Text style={styles.filterLabel}>Severidad:</Text>
-               <View style={styles.filterButtons}>
-                  {Object.values(AnemiaSeverity).map((severity) => (
-                     <TouchableOpacity
-                        key={severity}
-                        style={[
-                           styles.filterButton,
-                           severityFilter === severity && styles.filterButtonActive,
-                        ]}
-                        onPress={() => setSeverityFilter(severity === severityFilter ? undefined : severity)}
-                     >
-                        <Text
+               {/* Severity Filter */}
+               <View style={styles.filterRow}>
+                  <Text style={styles.filterLabel}>Severidad:</Text>
+                  <View style={styles.filterButtons}>
+                     {Object.values(AnemiaSeverity).map((severity) => (
+                        <TouchableOpacity
+                           key={severity}
                            style={[
-                              styles.filterButtonText,
-                              severityFilter === severity && styles.filterButtonTextActive,
+                              styles.filterButton,
+                              severityFilter === severity && styles.filterButtonActive,
                            ]}
+                           onPress={() => setSeverityFilter(severity === severityFilter ? undefined : severity)}
                         >
-                           {severity}
-                        </Text>
-                     </TouchableOpacity>
-                  ))}
+                           <Text
+                              style={[
+                                 styles.filterButtonText,
+                                 severityFilter === severity && styles.filterButtonTextActive,
+                              ]}
+                           >
+                              {severity}
+                           </Text>
+                        </TouchableOpacity>
+                     ))}
+                  </View>
+               </View>
+
+               <View style={styles.actionRow}>
+                  <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+                     <Ionicons name="search" size={20} color={AppColors.text.white} />
+                     <Text style={styles.searchButtonText}>Buscar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.clearButton} onPress={handleClearFilters}>
+                     <Text style={styles.clearButtonText}>Limpiar</Text>
+                  </TouchableOpacity>
                </View>
             </View>
 
-            <View style={styles.actionRow}>
-               <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-                  <Ionicons name="search" size={20} color="#fff" />
-                  <Text style={styles.searchButtonText}>Buscar</Text>
-               </TouchableOpacity>
-               <TouchableOpacity style={styles.clearButton} onPress={handleClearFilters}>
-                  <Text style={styles.clearButtonText}>Limpiar</Text>
-               </TouchableOpacity>
-            </View>
-         </View>
-
-         {/* Results Section */}
-         <View style={styles.resultsSection}>
-            <View style={styles.resultsHeader}>
-               <Text style={styles.resultsCount}>
-                  {data ? `${data.total} ${data.total === 1 ? 'paciente' : 'pacientes'}` : ''}
-               </Text>
-               {canCreatePatient(user) && (
-                  <TouchableOpacity style={styles.createButton} onPress={handleCreatePatient}>
-                     <Ionicons name="add-circle" size={24} color="#2196F3" />
-                     <Text style={styles.createButtonText}>Nuevo Paciente</Text>
-                  </TouchableOpacity>
+            {/* Results Section */}
+            <View style={styles.resultsSection}>
+               <View style={styles.resultsHeader}>
+                  <Text style={styles.resultsCount}>
+                     {data ? `${data.total} ${data.total === 1 ? 'paciente' : 'pacientes'}` : ''}
+                  </Text>
+                  {canCreatePatient(user) && (
+                     <TouchableOpacity style={styles.createButton} onPress={handleCreatePatient}>
+                        <Ionicons name="add-circle" size={24} color={AppColors.primary} />
+                        <Text style={styles.createButtonText}>Nuevo Paciente</Text>
+                     </TouchableOpacity>
+                  )}
+               </View>
+               {isLoading ? (
+                  <ActivityIndicator size="large" color={AppColors.primary} style={styles.loader} />
+               ) : (
+                  <FlatList
+                     data={data?.data || []}
+                     renderItem={({ item }) => (
+                        <PatientCard
+                           patient={item}
+                           onPress={() => handlePatientPress(item.dni)}
+                           showDetails
+                        />
+                     )}
+                     keyExtractor={(item) => item.dni}
+                     contentContainerStyle={styles.listContent}
+                     ListEmptyComponent={
+                        <View style={styles.emptyState}>
+                           <Ionicons name="search-outline" size={64} color={AppColors.disabled} />
+                           <Text style={styles.emptyText}>No se encontraron pacientes</Text>
+                        </View>
+                     }
+                  />
                )}
             </View>
-            {isLoading ? (
-               <ActivityIndicator size="large" color="#2196F3" style={styles.loader} />
-            ) : (
-               <FlatList
-                  data={data?.data || []}
-                  renderItem={({ item }) => (
-                     <PatientCard
-                        patient={item}
-                        onPress={() => handlePatientPress(item.dni)}
-                        showDetails
-                     />
-                  )}
-                  keyExtractor={(item) => item.dni}
-                  contentContainerStyle={styles.listContent}
-                  ListEmptyComponent={
-                     <View style={styles.emptyState}>
-                        <Ionicons name="search-outline" size={64} color="#ccc" />
-                        <Text style={styles.emptyText}>No se encontraron pacientes</Text>
-                     </View>
-                  }
-               />
-            )}
          </View>
-      </View>
+      </SafeAreaView>
    );
 }
 
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      backgroundColor: '#f5f5f5',
+      backgroundColor: AppColors.background.secondary,
    },
    searchSection: {
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       padding: 16,
       borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
+      borderBottomColor: AppColors.border.medium,
    },
    searchRow: {
       flexDirection: 'row',
@@ -180,7 +185,7 @@ const styles = StyleSheet.create({
       flex: 1,
       height: 44,
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: AppColors.border.medium,
       borderRadius: 8,
       paddingHorizontal: 12,
       fontSize: 14,
@@ -190,7 +195,7 @@ const styles = StyleSheet.create({
    },
    filterLabel: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
       marginBottom: 8,
    },
    filterButtons: {
@@ -203,19 +208,19 @@ const styles = StyleSheet.create({
       paddingVertical: 6,
       borderRadius: 16,
       borderWidth: 1,
-      borderColor: '#E0E0E0',
-      backgroundColor: '#fff',
+      borderColor: AppColors.border.medium,
+      backgroundColor: AppColors.background.primary,
    },
    filterButtonActive: {
-      backgroundColor: '#2196F3',
-      borderColor: '#2196F3',
+      backgroundColor: AppColors.primary,
+      borderColor: AppColors.primary,
    },
    filterButtonText: {
       fontSize: 12,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    filterButtonTextActive: {
-      color: '#fff',
+      color: AppColors.text.white,
    },
    actionRow: {
       flexDirection: 'row',
@@ -226,13 +231,13 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#2196F3',
+      backgroundColor: AppColors.primary,
       paddingVertical: 12,
       borderRadius: 8,
       gap: 8,
    },
    searchButtonText: {
-      color: '#fff',
+      color: AppColors.text.white,
       fontSize: 16,
       fontWeight: '600',
    },
@@ -241,11 +246,11 @@ const styles = StyleSheet.create({
       paddingVertical: 12,
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: AppColors.border.medium,
       justifyContent: 'center',
    },
    clearButtonText: {
-      color: '#666',
+      color: AppColors.text.secondary,
       fontSize: 14,
    },
    resultsSection: {
@@ -256,14 +261,14 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: 16,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
+      borderBottomColor: AppColors.border.medium,
    },
    resultsCount: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    createButton: {
       flexDirection: 'row',
@@ -272,7 +277,7 @@ const styles = StyleSheet.create({
    },
    createButtonText: {
       fontSize: 14,
-      color: '#2196F3',
+      color: AppColors.primary,
       fontWeight: '600',
    },
    listContent: {
@@ -288,7 +293,7 @@ const styles = StyleSheet.create({
    },
    emptyText: {
       fontSize: 16,
-      color: '#999',
+      color: AppColors.text.tertiary,
       marginTop: 16,
    },
 });

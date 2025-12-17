@@ -1,4 +1,5 @@
 import { Colors, ThemeManager, Typography } from 'react-native-ui-lib';
+import { AppColors } from './colors';
 import './themes';
 
 Typography.loadTypographies({
@@ -14,7 +15,7 @@ ThemeManager.setComponentTheme('Button', () => ({
   paddingHorizontal: 24,
   labelStyle: { fontWeight: '600', fontSize: 16, color: Colors.white },
   enableShadow: true, 
-  shadowColor: '#000',
+  shadowColor: AppColors.shadow,
   shadowOpacity: 0.1,
   shadowRadius: 6,
   shadowOffset: { width: 0, height: 3 },
@@ -39,7 +40,7 @@ ThemeManager.setComponentTheme('TextField', () => ({
     borderRadius: 12,
     backgroundColor: Colors.inputBG,
     padding: 14,
-    shadowColor: '#000',
+    shadowColor: AppColors.shadow,
     shadowOpacity: 0.05,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
@@ -58,7 +59,7 @@ ThemeManager.setComponentTheme('Picker', () => ({
     borderRadius: 12,
     backgroundColor: Colors.inputBG,
     padding: 14,
-    shadowColor: '#000',
+    shadowColor: AppColors.shadow,
     shadowOpacity: 0.05,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },

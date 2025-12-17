@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { authService } from '@/services/authService';
 import { useRouter } from 'expo-router';
+import { AppColors } from '@/utils/styles/colors';
 
 export default function LoginScreen() {
    const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +34,7 @@ export default function LoginScreen() {
          <View style={styles.content}>
             {/* Logo o título */}
             <View style={styles.header}>
-               <MaterialIcons name="local-hospital" size={80} color="#2196F3" />
+               <MaterialIcons name="local-hospital" size={80} color={AppColors.primary} />
                <Text style={styles.title}>H-Calculator</Text>
                <Text style={styles.subtitle}>Calculadora de Hemoglobina</Text>
             </View>
@@ -53,10 +54,10 @@ export default function LoginScreen() {
                   disabled={isLoading}
                >
                   {isLoading ? (
-                     <ActivityIndicator color="#fff" />
+                     <ActivityIndicator color={AppColors.text.white} />
                   ) : (
                      <>
-                        <MaterialIcons name="login" size={24} color="#fff" />
+                        <MaterialIcons name="login" size={24} color={AppColors.text.white} />
                         <Text style={styles.buttonText}>Iniciar sesión con Google</Text>
                      </>
                   )}
@@ -80,7 +81,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
    },
    content: {
       flex: 1,
@@ -95,23 +96,23 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 32,
       fontWeight: 'bold',
-      color: '#2196F3',
+      color: AppColors.primary,
       marginTop: 16,
    },
    subtitle: {
       fontSize: 16,
-      color: '#666',
+      color: AppColors.text.secondary,
       marginTop: 8,
    },
    infoContainer: {
-      backgroundColor: '#E3F2FD',
+      backgroundColor: AppColors.background.info,
       padding: 20,
       borderRadius: 12,
       marginBottom: 40,
    },
    infoText: {
       fontSize: 14,
-      color: '#1976D2',
+      color: AppColors.info,
       textAlign: 'center',
       lineHeight: 20,
    },
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
       marginBottom: 24,
    },
    googleButton: {
-      backgroundColor: '#2196F3',
+      backgroundColor: AppColors.primary,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
       borderRadius: 12,
       gap: 12,
       elevation: 2,
-      shadowColor: '#000',
+      shadowColor: AppColors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
       opacity: 0.6,
    },
    buttonText: {
-      color: '#fff',
+      color: AppColors.text.white,
       fontSize: 16,
       fontWeight: '600',
    },
@@ -147,11 +148,11 @@ const styles = StyleSheet.create({
    },
    footerText: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
       marginBottom: 4,
    },
    footerTextSmall: {
       fontSize: 12,
-      color: '#999',
+      color: AppColors.text.tertiary,
    },
 });

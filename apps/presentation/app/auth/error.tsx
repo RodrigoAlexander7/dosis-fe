@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { AppColors } from '@/utils/styles/colors';
 
 export default function AuthErrorScreen() {
    const { message } = useLocalSearchParams<{ message?: string }>();
@@ -11,7 +12,7 @@ export default function AuthErrorScreen() {
    return (
       <SafeAreaView style={styles.container}>
          <View style={styles.content}>
-            <MaterialIcons name="error-outline" size={80} color="#f44336" />
+            <MaterialIcons name="error-outline" size={80} color={AppColors.error} />
 
             <Text style={styles.title}>Error de Autenticación</Text>
 
@@ -33,7 +34,7 @@ export default function AuthErrorScreen() {
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
    },
    content: {
       flex: 1,
@@ -44,25 +45,25 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: '#333',
+      color: AppColors.text.primary,
       marginTop: 24,
       marginBottom: 16,
    },
    message: {
       fontSize: 16,
-      color: '#666',
+      color: AppColors.text.secondary,
       textAlign: 'center',
       marginBottom: 32,
       lineHeight: 24,
    },
    button: {
-      backgroundColor: '#2196F3',
+      backgroundColor: AppColors.primary,
       paddingVertical: 14,
       paddingHorizontal: 32,
       borderRadius: 8,
    },
    buttonText: {
-      color: '#fff',
+      color: AppColors.text.white,
       fontSize: 16,
       fontWeight: '600',
    },

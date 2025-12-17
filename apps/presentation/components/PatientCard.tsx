@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Patient, AnemiaSeverity } from '@/services/types/patient.types';
 import { Ionicons } from '@expo/vector-icons';
 import dayjs from 'dayjs';
+import { AppColors, getAnemiaSeverityColor } from '@/utils/styles/colors';
 
 interface PatientCardProps {
    patient: Patient;
@@ -10,20 +11,7 @@ interface PatientCardProps {
    showDetails?: boolean;
 }
 
-const getSeverityColor = (severity: AnemiaSeverity): string => {
-   switch (severity) {
-      case AnemiaSeverity.NONE:
-         return '#4CAF50';
-      case AnemiaSeverity.MILD:
-         return '#FF9800';
-      case AnemiaSeverity.MODERATE:
-         return '#FF5722';
-      case AnemiaSeverity.SEVERE:
-         return '#F44336';
-      default:
-         return '#9E9E9E';
-   }
-};
+// getSeverityColor replaced by getAnemiaSeverityColor from colors.ts
 
 const getSeverityLabel = (severity: AnemiaSeverity): string => {
    switch (severity) {
@@ -61,7 +49,7 @@ export const PatientCard: React.FC<PatientCardProps> = ({
                <View
                   style={[
                      styles.severityBadge,
-                     { backgroundColor: getSeverityColor(latestVisit.anemiaSeverity) }
+                     { backgroundColor: getAnemiaSeverityColor(latestVisit.anemiaSeverity) }
                   ]}
                >
                   <Text style={styles.severityText}>
@@ -73,20 +61,20 @@ export const PatientCard: React.FC<PatientCardProps> = ({
 
          <View style={styles.details}>
             <View style={styles.detailRow}>
-               <Ionicons name="calendar-outline" size={16} color="#666" />
+               <Ionicons name="calendar-outline" size={16} color={AppColors.text.secondary} />
                <Text style={styles.detailText}>
                   Nacimiento: {dayjs(patient.birthDate).format('DD/MM/YYYY')}
                </Text>
             </View>
             <View style={styles.detailRow}>
-               <Ionicons name="location-outline" size={16} color="#666" />
+               <Ionicons name="location-outline" size={16} color={AppColors.text.secondary} />
                <Text style={styles.detailText}>
                   {patient.town?.name}, {patient.district?.name}
                </Text>
             </View>
             {latestVisit && latestVisit.hbAdjusted && (
                <View style={styles.detailRow}>
-                  <Ionicons name="water-outline" size={16} color="#666" />
+                  <Ionicons name="water-outline" size={16} color={AppColors.text.secondary} />
                   <Text style={styles.detailText}>
                      Última visita: HB {Number(latestVisit.hbAdjusted).toFixed(1)} g/dL
                   </Text>
@@ -103,7 +91,7 @@ export const PatientCard: React.FC<PatientCardProps> = ({
          )}
 
          <View style={styles.arrow}>
-            <Ionicons name="chevron-forward" size={20} color="#2196F3" />
+            <Ionicons name="chevron-forward" size={20} color={AppColors.primary} />
          </View>
       </TouchableOpacity>
    );
@@ -111,11 +99,11 @@ export const PatientCard: React.FC<PatientCardProps> = ({
 
 const styles = StyleSheet.create({
    card: {
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.white,
       borderRadius: 12,
       padding: 16,
       marginBottom: 12,
-      shadowColor: '#000',
+      shadowColor: AppColors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -133,16 +121,16 @@ const styles = StyleSheet.create({
    name: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 4,
    },
    subtitle: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    dni: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    severityBadge: {
       paddingHorizontal: 12,
@@ -150,7 +138,7 @@ const styles = StyleSheet.create({
       borderRadius: 12,
    },
    severityText: {
-      color: '#fff',
+      color: AppColors.white,
       fontSize: 12,
       fontWeight: '600',
    },
@@ -164,17 +152,17 @@ const styles = StyleSheet.create({
    },
    detailText: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    visitsCount: {
       marginTop: 12,
       paddingTop: 12,
       borderTopWidth: 1,
-      borderTopColor: '#E0E0E0',
+      borderTopColor: AppColors.border.light,
    },
    visitsText: {
       fontSize: 13,
-      color: '#2196F3',
+      color: AppColors.primary,
       fontWeight: '500',
    },
    arrow: {

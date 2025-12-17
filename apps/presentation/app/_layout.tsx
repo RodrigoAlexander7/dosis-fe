@@ -6,6 +6,7 @@ import { useAuthStore, isAdmin } from '@/stores/authStore';
 import { ActivityIndicator, View } from 'react-native';
 import "../utils/styles/styles";
 import "../utils/styles/themes";
+import { AppColors } from '@/utils/styles/colors';
 
 function useProtectedRoute() {
    const segments = useSegments();
@@ -44,7 +45,7 @@ export default function RootLayout() {
    if (isLoading) {
       return (
          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" color="#2196F3" />
+            <ActivityIndicator size="large" color={AppColors.primary} />
          </View>
       );
    }

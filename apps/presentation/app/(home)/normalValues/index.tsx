@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Row, Rows, Table } from "react-native-table-component";
+import { AppColors } from '@/utils/styles/colors';
 
 export default function ExampleOne() {
    const [tableHead] = useState([
@@ -35,7 +36,7 @@ export default function ExampleOne() {
       <ScrollView>
          <ScrollView horizontal >
             <View style={styles.container}>
-               <Table borderStyle={{ borderWidth: 2, borderColor: "#c8e1ff" }}>
+               <Table borderStyle={{ borderWidth: 2, borderColor: AppColors.info }}>
                   <Row data={tableHead} style={styles.head} textStyle={styles.text} widthArr={[200, 80, 80, 80, 80]} />
                   <Rows data={tableData} textStyle={styles.text} widthArr={[200, 80, 80, 80, 80]} />
                </Table>
@@ -46,8 +47,8 @@ export default function ExampleOne() {
 }
 
 const styles = StyleSheet.create({
-   container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: "#fff" },
-   head: { minHeight: 60, backgroundColor: "#f1f8ff" },
+   container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: AppColors.background.primary },
+   head: { minHeight: 60, backgroundColor: AppColors.background.info },
    textHead: {
       margin: 6,
       textAlign: "center",
@@ -58,6 +59,6 @@ const styles = StyleSheet.create({
       margin: 6,
       textAlign: "center",
       flexWrap: "wrap",
-      color: 'black'
+      color: AppColors.text.primary
    },
 });

@@ -18,7 +18,7 @@ export const getDose = (suplementValue: Suplement, age: number, weight: number, 
    console.log(ageDoseAmount + '***********')
 
    if (isAnemic && ageDoseAmount)
-      doseResult = weight * ageDoseAmount / suplementValue.elementalIron
+      doseResult = weight * 3 / suplementValue.elementalIron
 
    else if (!isAnemic && ageDoseAmount)
       doseResult = weight * 2 / 3 * ageDoseAmount / suplementValue.elementalIron

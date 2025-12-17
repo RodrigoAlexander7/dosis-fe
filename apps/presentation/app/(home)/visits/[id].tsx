@@ -8,6 +8,7 @@ import {
    TouchableOpacity,
    Alert,
    RefreshControl,
+   Image,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -17,6 +18,8 @@ import { visitsApi } from '@/services/api/visits.api';
 import { AnemiaSeverity, FemaleAdditional, GestationTrimester } from '@/services/types/patient.types';
 import { useAuthStore, canDeleteRecords } from '@/stores/authStore';
 import { getErrorMessage } from '@/utils/errorHandler';
+import { getSupplementImage, defaultSupplementImage } from '@/utils/supplementImages';
+import { AppColors, getAnemiaSeverityColor } from '@/utils/styles/colors';
 
 export default function VisitDetailsScreen() {
    const { id } = useLocalSearchParams<{ id: string }>();
@@ -93,20 +96,7 @@ export default function VisitDetailsScreen() {
       );
    };
 
-   const getSeverityColor = (severity: AnemiaSeverity): string => {
-      switch (severity) {
-         case AnemiaSeverity.NONE:
-            return '#4CAF50';
-         case AnemiaSeverity.MILD:
-            return '#FF9800';
-         case AnemiaSeverity.MODERATE:
-            return '#FF5722';
-         case AnemiaSeverity.SEVERE:
-            return '#F44336';
-         default:
-            return '#9E9E9E';
-      }
-   };
+   // getSeverityColor replaced by getAnemiaSeverityColor from colors.ts
 
    const getSeverityLabel = (severity: AnemiaSeverity): string => {
       switch (severity) {
@@ -154,7 +144,7 @@ export default function VisitDetailsScreen() {
    if (isLoading) {
       return (
          <View style={styles.centered}>
-            <ActivityIndicator size="large" color="#2196F3" />
+            <ActivityIndicator size="large" color={AppColors.primary} />
          </View>
       );
    }
@@ -162,7 +152,7 @@ export default function VisitDetailsScreen() {
    if (!isValidId) {
       return (
          <View style={styles.centered}>
-            <Ionicons name="alert-circle-outline" size={64} color="#F44336" />
+            <Ionicons name="alert-circle-outline" size={64} color={AppColors.error} />
             <Text style={styles.errorText}>ID de visita inválido</Text>
             <Text style={styles.errorDetail}>
                El ID proporcionado ({id}) no es válido
@@ -218,7 +208,7 @@ export default function VisitDetailsScreen() {
                <View
                   style={[
                      styles.severityBadge,
-                     { backgroundColor: getSeverityColor(visit.anemiaSeverity) },
+                     { backgroundColor: getAnemiaSeverityColor(visit.anemiaSeverity) },
                   ]}
                >
                   <Text style={styles.severityText}>
@@ -232,9 +222,9 @@ export default function VisitDetailsScreen() {
                style={styles.patientLink}
                onPress={() => router.push(`/(home)/patients/${visit.patientDni}`)}
             >
-               <Ionicons name="person-outline" size={20} color="#2196F3" />
+               <Ionicons name="person-outline" size={20} color={AppColors.primary} />
                <Text style={styles.patientLinkText}>Ver Paciente DNI: {visit.patientDni}</Text>
-               <Ionicons name="chevron-forward" size={20} color="#2196F3" />
+               <Ionicons name="chevron-forward" size={20} color={AppColors.primary} />
             </TouchableOpacity>
 
             {/* Measurements Section */}
@@ -242,13 +232,13 @@ export default function VisitDetailsScreen() {
                <Text style={styles.sectionTitle}>Mediciones</Text>
                <View style={styles.measurementsGrid}>
                   <View style={styles.measurementCard}>
-                     <Ionicons name="scale-outline" size={24} color="#2196F3" />
+                     <Ionicons name="scale-outline" size={24} color={AppColors.primary} />
                      <Text style={styles.measurementLabel}>Peso</Text>
                      <Text style={styles.measurementValue}>{visit.weight} kg</Text>
                   </View>
 
                   <View style={styles.measurementCard}>
-                     <Ionicons name="water-outline" size={24} color="#FF5722" />
+                     <Ionicons name="water-outline" size={24} color={AppColors.warning} />
                      <Text style={styles.measurementLabel}>HB Observada</Text>
                      <Text style={styles.measurementValue}>
                         {Number(visit.hbObserved).toFixed(1)} g/dL
@@ -256,7 +246,7 @@ export default function VisitDetailsScreen() {
                   </View>
 
                   <View style={styles.measurementCard}>
-                     <Ionicons name="analytics-outline" size={24} color="#4CAF50" />
+                     <Ionicons name="analytics-outline" size={24} color={AppColors.success} />
                      <Text style={styles.measurementLabel}>HB Ajustada</Text>
                      <Text style={styles.measurementValue}>
                         {Number(visit.hbAdjusted).toFixed(1)} g/dL
@@ -270,7 +260,7 @@ export default function VisitDetailsScreen() {
                <View style={styles.section}>
                   <Text style={styles.sectionTitle}>Información Adicional</Text>
                   <View style={styles.infoRow}>
-                     <Ionicons name="information-circle-outline" size={20} color="#666" />
+                     <Ionicons name="information-circle-outline" size={20} color={AppColors.text.secondary} />
                      <View style={styles.infoContent}>
                         {femaleAdditionalLabel && (
                            <Text style={styles.infoText}>{femaleAdditionalLabel}</Text>
@@ -291,7 +281,7 @@ export default function VisitDetailsScreen() {
                      <View key={prescription.prescriptionId} style={styles.prescriptionCard}>
                         <View style={styles.prescriptionHeader}>
                            <View style={styles.supplementInfo}>
-                              <Ionicons name="medkit" size={20} color="#2196F3" />
+                              <Ionicons name="medkit" size={20} color={AppColors.primary} />
                               <View style={styles.supplementText}>
                                  <Text style={styles.supplementName}>
                                     {prescription.supplement?.name || 'Suplemento'}
@@ -305,14 +295,14 @@ export default function VisitDetailsScreen() {
 
                         <View style={styles.prescriptionDetails}>
                            <View style={styles.prescriptionDetailRow}>
-                              <Ionicons name="water-outline" size={16} color="#666" />
+                              <Ionicons name="water-outline" size={16} color={AppColors.text.secondary} />
                               <Text style={styles.prescriptionDetailText}>
                                  Dosis: {Number(prescription.prescribedDose).toFixed(1)} mg
                               </Text>
                            </View>
 
                            <View style={styles.prescriptionDetailRow}>
-                              <Ionicons name="calendar-outline" size={16} color="#666" />
+                              <Ionicons name="calendar-outline" size={16} color={AppColors.text.secondary} />
                               <Text style={styles.prescriptionDetailText}>
                                  Duración: {prescription.treatmentDurationDays} días
                               </Text>
@@ -320,10 +310,64 @@ export default function VisitDetailsScreen() {
 
                            {prescription.prescriptionNotes && (
                               <View style={styles.prescriptionDetailRow}>
-                                 <Ionicons name="document-text-outline" size={16} color="#666" />
+                                 <Ionicons name="document-text-outline" size={16} color={AppColors.text.secondary} />
                                  <Text style={styles.prescriptionDetailText}>
                                     {prescription.prescriptionNotes}
                                  </Text>
+                              </View>
+                           )}
+                        </View>
+                     </View>
+                  ))}
+               </View>
+            )}
+
+            {/* Prescriptions Section */}
+            {visit.prescriptions && visit.prescriptions.length > 0 && (
+               <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>
+                     <Ionicons name="medical" size={20} color={AppColors.success} /> Prescripción
+                  </Text>
+                  {visit.prescriptions.map((prescription) => (
+                     <View key={prescription.prescriptionId} style={styles.prescriptionCard}>
+                        {/* Supplement Image */}
+                        <Image
+                           source={getSupplementImage(prescription.supplement?.name) || defaultSupplementImage}
+                           style={styles.supplementImage}
+                           resizeMode="contain"
+                        />
+
+                        {/* Prescription Details */}
+                        <View style={styles.prescriptionDetails}>
+                           <Text style={styles.supplementName}>
+                              {prescription.supplement?.name || 'Suplemento desconocido'}
+                           </Text>
+
+                           <View style={styles.prescriptionRow}>
+                              <Ionicons name="water" size={16} color={AppColors.text.secondary} />
+                              <Text style={styles.prescriptionText}>
+                                 Dosis: {Number(prescription.prescribedDose).toFixed(0)} {prescription.unitMeasure} por toma
+                              </Text>
+                           </View>
+
+                           <View style={styles.prescriptionRow}>
+                              <Ionicons name="calendar" size={16} color={AppColors.text.secondary} />
+                              <Text style={styles.prescriptionText}>
+                                 Duración: {prescription.treatmentMonths} {prescription.treatmentMonths === 1 ? 'mes' : 'meses'} ({prescription.treatmentDurationDays} días)
+                              </Text>
+                           </View>
+
+                           <View style={styles.prescriptionRow}>
+                              <Ionicons name="cube" size={16} color={AppColors.text.secondary} />
+                              <Text style={styles.prescriptionText}>
+                                 Cantidad: {prescription.numberOfBottles} {prescription.supplement?.presentation === 'TABLET' ? 'blisters' : 'frascos'}
+                              </Text>
+                           </View>
+
+                           {prescription.prescriptionNotes && (
+                              <View style={styles.prescriptionNotes}>
+                                 <Ionicons name="information-circle" size={16} color={AppColors.primary} />
+                                 <Text style={styles.notesText}>{prescription.prescriptionNotes}</Text>
                               </View>
                            )}
                         </View>
@@ -337,7 +381,7 @@ export default function VisitDetailsScreen() {
                <View style={styles.section}>
                   <Text style={styles.sectionTitle}>Registro</Text>
                   <View style={styles.infoRow}>
-                     <Ionicons name="person-circle-outline" size={20} color="#666" />
+                     <Ionicons name="person-circle-outline" size={20} color={AppColors.text.secondary} />
                      <View style={styles.infoContent}>
                         <Text style={styles.infoText}>
                            Registrado por: {visit.createdBy.name}
@@ -374,7 +418,7 @@ export default function VisitDetailsScreen() {
 const styles = StyleSheet.create({
    container: {
       flex: 1,
-      backgroundColor: '#f5f5f5',
+      backgroundColor: AppColors.background.secondary,
    },
    centered: {
       flex: 1,
@@ -382,11 +426,11 @@ const styles = StyleSheet.create({
       alignItems: 'center',
    },
    infoCard: {
-      backgroundColor: '#fff',
+      backgroundColor: AppColors.background.primary,
       margin: 16,
       borderRadius: 12,
       padding: 16,
-      shadowColor: '#000',
+      shadowColor: AppColors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -399,7 +443,7 @@ const styles = StyleSheet.create({
       marginBottom: 16,
       paddingBottom: 16,
       borderBottomWidth: 1,
-      borderBottomColor: '#E0E0E0',
+      borderBottomColor: AppColors.border.medium,
    },
    headerLeft: {
       flex: 1,
@@ -407,12 +451,12 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 4,
    },
    subtitle: {
       fontSize: 16,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    severityBadge: {
       paddingHorizontal: 12,
@@ -420,7 +464,7 @@ const styles = StyleSheet.create({
       borderRadius: 12,
    },
    severityText: {
-      color: '#fff',
+      color: AppColors.text.white,
       fontSize: 12,
       fontWeight: '600',
    },
@@ -429,14 +473,14 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       gap: 8,
       padding: 12,
-      backgroundColor: '#E3F2FD',
+      backgroundColor: AppColors.background.info,
       borderRadius: 8,
       marginBottom: 16,
    },
    patientLinkText: {
       flex: 1,
       fontSize: 14,
-      color: '#2196F3',
+      color: AppColors.primary,
       fontWeight: '600',
    },
    section: {
@@ -445,7 +489,7 @@ const styles = StyleSheet.create({
    sectionTitle: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 12,
    },
    measurementsGrid: {
@@ -454,7 +498,7 @@ const styles = StyleSheet.create({
    },
    measurementCard: {
       flex: 1,
-      backgroundColor: '#F5F5F5',
+      backgroundColor: AppColors.background.tertiary,
       borderRadius: 8,
       padding: 12,
       alignItems: 'center',
@@ -462,13 +506,13 @@ const styles = StyleSheet.create({
    },
    measurementLabel: {
       fontSize: 11,
-      color: '#666',
+      color: AppColors.text.secondary,
       textAlign: 'center',
    },
    measurementValue: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    infoRow: {
       flexDirection: 'row',
@@ -481,34 +525,34 @@ const styles = StyleSheet.create({
    },
    infoText: {
       fontSize: 14,
-      color: '#212121',
+      color: AppColors.text.primary,
    },
    infoSubtext: {
       fontSize: 12,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    dangerButton: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#F44336',
+      backgroundColor: AppColors.error,
       paddingVertical: 12,
       borderRadius: 8,
       gap: 8,
       marginTop: 8,
    },
    dangerButtonText: {
-      color: '#fff',
+      color: AppColors.text.white,
       fontSize: 16,
       fontWeight: '600',
    },
    prescriptionCard: {
-      backgroundColor: '#F5F5F5',
+      backgroundColor: AppColors.background.tertiary,
       borderRadius: 8,
       padding: 12,
       marginBottom: 12,
       borderLeftWidth: 3,
-      borderLeftColor: '#2196F3',
+      borderLeftColor: AppColors.primary,
    },
    prescriptionHeader: {
       marginBottom: 8,
@@ -524,12 +568,12 @@ const styles = StyleSheet.create({
    supplementName: {
       fontSize: 16,
       fontWeight: '600',
-      color: '#212121',
+      color: AppColors.text.primary,
       marginBottom: 2,
    },
    supplementType: {
       fontSize: 12,
-      color: '#666',
+      color: AppColors.text.secondary,
    },
    prescriptionDetails: {
       gap: 6,
@@ -541,31 +585,63 @@ const styles = StyleSheet.create({
    },
    prescriptionDetailText: {
       fontSize: 14,
-      color: '#666',
+      color: AppColors.text.secondary,
       flex: 1,
    },
    errorText: {
       fontSize: 16,
-      color: '#666',
+      color: AppColors.text.secondary,
       marginBottom: 8,
    },
    errorDetail: {
       fontSize: 14,
-      color: '#F44336',
+      color: AppColors.error,
       marginBottom: 16,
       textAlign: 'center',
       paddingHorizontal: 20,
    },
    backButton: {
-      backgroundColor: '#2196F3',
+      backgroundColor: AppColors.primary,
       paddingHorizontal: 24,
       paddingVertical: 12,
       borderRadius: 8,
       marginTop: 8,
    },
    backButtonText: {
-      color: '#fff',
+      color: AppColors.text.white,
       fontSize: 16,
       fontWeight: '600',
+   },
+   supplementImage: {
+      width: 80,
+      height: 80,
+      borderRadius: 8,
+      marginBottom: 12,
+      backgroundColor: AppColors.border.medium,
+   },
+   prescriptionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginVertical: 4,
+   },
+   prescriptionText: {
+      fontSize: 14,
+      color: AppColors.text.primary,
+      flex: 1,
+   },
+   prescriptionNotes: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 8,
+      marginTop: 8,
+      padding: 8,
+      backgroundColor: AppColors.background.info,
+      borderRadius: 6,
+   },
+   notesText: {
+      fontSize: 13,
+      color: AppColors.info,
+      flex: 1,
    },
 });

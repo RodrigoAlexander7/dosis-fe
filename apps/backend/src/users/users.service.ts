@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
-import { User, EnumRole } from '@prisma/client';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "@/prisma/prisma.service";
+import { User, EnumRole } from "@prisma/client";
+import { ConfigService } from "@nestjs/config";
 
 export interface CreateUserFromOAuthDto {
   email: string;
@@ -15,8 +15,8 @@ export interface CreateUserFromOAuthDto {
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly configService: ConfigService,
-  ) { }
+    private readonly configService: ConfigService
+  ) {}
 
   /**
    * Find user by email
@@ -52,7 +52,7 @@ export class UsersService {
     const { email, name, image, provider, providerId } = data;
 
     // Check if user is admin by email
-    const adminEmail = this.configService.get<string>('ADMIN_EMAIL');
+    const adminEmail = this.configService.get<string>("ADMIN_EMAIL");
     const isAdmin = email === adminEmail;
 
     return this.prisma.user.create({
@@ -61,10 +61,10 @@ export class UsersService {
         name,
         image,
         isActive: true,
-        role: isAdmin ? 'ADMIN' : null, // ADMIN auto-assigned, others by admin/doctor
+        role: isAdmin ? "ADMIN" : null, // ADMIN auto-assigned, others by admin/doctor
         accounts: {
           create: {
-            type: 'oauth',
+            type: "oauth",
             provider,
             providerAccountId: providerId,
           },
@@ -112,7 +112,7 @@ export class UsersService {
         accounts: true,
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
   }
@@ -125,12 +125,12 @@ export class UsersService {
     return this.prisma.user.findMany({
       where: {
         role: {
-          in: ['DOCTOR', 'NURSE'],
+          in: ["DOCTOR", "NURSE"],
         },
         isActive: true,
       },
       orderBy: {
-        name: 'asc',
+        name: "asc",
       },
     });
   }
