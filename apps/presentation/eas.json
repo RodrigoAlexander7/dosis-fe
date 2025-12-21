@@ -11,7 +11,7 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://dosis-fe.onrender.com"
+        "EXPO_PUBLIC_API_URL": "https://proyectosepis.unsa.edu.pe/dosisfe"
       }
     },
     "preview1": {
@@ -19,13 +19,13 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://dosis-fe.onrender.com"
+        "EXPO_PUBLIC_API_URL": "https://proyectosepis.unsa.edu.pe/dosisfe"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://dosis-fe.onrender.com"
+        "EXPO_PUBLIC_API_URL": "https://proyectosepis.unsa.edu.pe/dosisfe"
       }
     },
     "development-simulator": {

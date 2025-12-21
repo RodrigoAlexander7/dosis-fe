@@ -25,7 +25,7 @@ export const authService = {
    loginWithGoogle: async (): Promise<void> => {
       try {
          const redirectUri = makeRedirectUri({
-            scheme: process.env.EXPO_PUBLIC_APP_SCHEME || 'ironsuplementcalculator',
+            scheme: 'ironsuplementcalculator',
             path: 'auth/callback',
          });
 
