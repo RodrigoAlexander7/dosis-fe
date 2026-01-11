@@ -28,11 +28,11 @@ interface FemaleRules {
 
 
 const genericRules: GenericRules[] = [
-   { ageMax: WEEK, stats: [{ anemiaLimit: 13, result: 'Anemia' }] },
-   { ageMax: 4 * WEEK, stats: [{ anemiaLimit: 10, result: 'Anemia' }] },
-   { ageMax: 8 * WEEK, stats: [{ anemiaLimit: 8, result: 'Anemia' }] },
-   { ageMax: 2 * MONTH, stats: [{ anemiaLimit: 13.49, result: 'Anemia' }] },
-   { ageMax: 6 * MONTH, stats: [{ anemiaLimit: 9.49, result: 'Anemia' }] },
+   // Normas técnicas MINSA/OMS para diagnóstico de anemia
+   { ageMax: WEEK, stats: [{ anemiaLimit: 13.49, result: 'Anemia' }] },           // 0-7 días: HB < 13.5
+   { ageMax: 4 * WEEK, stats: [{ anemiaLimit: 9.99, result: 'Anemia' }] },        // 8-28 días: HB < 10.0
+   { ageMax: 8 * WEEK, stats: [{ anemiaLimit: 8.99, result: 'Anemia' }] },        // 29-56 días: HB < 9.0
+   { ageMax: 6 * MONTH, stats: [{ anemiaLimit: 10.99, result: 'Anemia' }] },      // 57-180 días (2-6 meses): HB < 11.0
    {
       ageMax: 2 * YEAR, stats: [
          { anemiaLimit: 6.99, result: 'Anemia Severa' },
@@ -133,13 +133,13 @@ export const calculateDiagnostic = (dateBirthStr: string, gender: string, isGest
    let hb: number = Number(hbStr)
    hb = hb - hbCorrection
 
-   if (ageDays < 12 * YEAR) {
-      const gStast = genericRules.find(obj => ageDays < obj.ageMax)?.stats
+   if (ageDays <= 12 * YEAR) {
+      const gStast = genericRules.find(obj => ageDays <= obj.ageMax)?.stats
       if (gStast) return getResult(gStast, hb)
    }
 
    else if (gender === 'M') {
-      const mStats = maleRules.find(obj => ageDays < obj.ageMax)?.stats
+      const mStats = maleRules.find(obj => ageDays <= obj.ageMax)?.stats
       if (mStats) return getResult(mStats, hb)
    }
 
@@ -153,7 +153,7 @@ export const calculateDiagnostic = (dateBirthStr: string, gender: string, isGest
          if (fStats) return getResult(fStats, hb);
       }
       else {
-         const fStats = femaleRules.find(obj => obj.isGestant === false && obj.ageMax !== undefined && ageDays < obj.ageMax)?.stats
+         const fStats = femaleRules.find(obj => obj.isGestant === false && obj.ageMax !== undefined && ageDays <= obj.ageMax)?.stats
          if (fStats) return getResult(fStats, hb)
       }
    }

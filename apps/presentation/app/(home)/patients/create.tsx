@@ -89,7 +89,7 @@ export default function CreatePatientScreen() {
          gestationTime,
       });
 
-      return calculate({
+      const result = calculate({
          hbObserved: Number(hbObserved),
          altitudeAdjustment: location.adjustHB,
          birthDate: birthDate.format('YYYY-MM-DD'),
@@ -97,7 +97,9 @@ export default function CreatePatientScreen() {
          femaleAdditional: backendTypes.femaleAdditional,
          gestationTrimester: backendTypes.gestationTrimester,
       });
-   }, [weight, hbObserved, birthDate, location.adjustHB, gender, femaleAditional, gestationTime]);
+
+      return result;
+   }, [weight, hbObserved, birthDate, location.adjustHB, gender, femaleAditional, gestationTime, calculate, mapExistingToBackend]);
 
    // Mock patient object for supplement calculation
    const mockPatient = React.useMemo(() => ({

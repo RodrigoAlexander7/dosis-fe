@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { calculateDiagnostic } from '@/modules/patient/services/patientDiagnostic.service';
 import { AnemiaSeverity, FemaleAdditional, GestationTrimester, Gender } from '@/services/types/patient.types';
 
@@ -19,7 +19,7 @@ export const useHemoglobinCalculations = () => {
     * Calcula hemoglobina ajustada y severidad de anemia
     * Usa la lógica existente en patientDiagnostic.service.ts
     */
-   const calculate = (params: HemoglobinCalculationParams) => {
+   const calculate = useCallback((params: HemoglobinCalculationParams) => {
       const { hbObserved, altitudeAdjustment, birthDate, gender, femaleAdditional, gestationTrimester } = params;
 
       // Calcular HB ajustada
@@ -59,7 +59,7 @@ export const useHemoglobinCalculations = () => {
          anemiaSeverity: severity,
          diagnostic,
       };
-   };
+   }, []);
 
    /**
     * Mapea el diagnóstico de texto a enum AnemiaSeverity
@@ -68,6 +68,8 @@ export const useHemoglobinCalculations = () => {
       if (diagnostic.includes('Severa')) return AnemiaSeverity.SEVERE;
       if (diagnostic.includes('Moderada')) return AnemiaSeverity.MODERATE;
       if (diagnostic.includes('Leve')) return AnemiaSeverity.MILD;
+      // "Anemia" sin calificativo (bebés < 6 meses) se considera MILD
+      if (diagnostic.includes('Anemia')) return AnemiaSeverity.MILD;
       return AnemiaSeverity.NONE;
    };
 
@@ -92,7 +94,7 @@ export const useHemoglobinCalculations = () => {
    /**
     * Mapea formato existente a enums del backend
     */
-   const mapExistingToBackend = (params: {
+   const mapExistingToBackend = useCallback((params: {
       gender: 'M' | 'F';
       femaleAditional: 'G' | 'P' | null;
       gestationTime: '1' | '2' | '3' | null;
@@ -105,7 +107,7 @@ export const useHemoglobinCalculations = () => {
             params.gestationTime === '2' ? GestationTrimester.SECOND :
                params.gestationTime === '3' ? GestationTrimester.THIRD : GestationTrimester.NONE,
       };
-   };
+   }, []);
 
    return {
       hbAdjusted,
